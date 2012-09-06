@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>IndexDB Samples</title>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+		var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+		var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+		window.db = null;
+
+		function init(){
+			<!-- Abriendo la Base de datos, donde explicitamos la version -->
+			var openDBRequest = window.indexedDB.open("myDatabase", 2);
+			
+			<!-- Este evento es disparado cuando la version cambia y es necesario -->
+			<!-- hacer un cambio en la estructura de la base de datos -->
+			openDBRequest.onupgradeneeded = function(e){
+				window.db = e.target.result;
+  				<!-- Creamos la Persona -->
+  				if(!window.db.objectStoreNames.contains("person")) {
+		    		var objectStore = window.db.createObjectStore("person", {keyPath: "id", autoIncrement: true});
+    				objectStore.createIndex("name", "name", { unique: false });
+  					objectStore.createIndex("email", "email", { unique: true });
+  					console.log("ObjectStore create: Success");
+  				}
+
+			}
+
+			<!-- Este evento es disparado cuando la base de datos es abierta sin errores -->
+			openDBRequest.onsuccess = function(e){
+				window.db = e.target.result;
+				console.log(window.db);
+				console.log("Data Base open: Success");
+
+
+			}
+
+			document.querySelector("#add").addEventListener("click", handlePreSave, false);
+
+		}
+
+		function handlePreSave(e){
+			console.log("Manage localstorage from input values");
+			var transaction = window.db.transaction(["person"], "readwrite");
+
+			var person = transaction.objectStore("person");
+			var obj = requestValues();
+			var request = person.add({"name" : obj.name, "email" : obj.email});
+
+			request.onsuccess = function(e){
+				console.log("Request is complete: Success");				
+			}
+
+			request.onerror = function(e){
+				console.log("Request is complete: Error =>"+ e.target.error.name);
+			}
+
+			transaction.oncomplete = function(e) {
+  				console.log("Transaction is complete: Success");
+  				var trx = window.db.transaction(["person"]);
+				var objectStore = trx.objectStore("person");
+				objectStore.openCursor().onsuccess = function(e) {
+  					var cursor = e.target.result;
+					if (cursor) {
+    					console.log("Name " + cursor.key + " is " + cursor.value.name);
+    					cursor.continue();
+  					}else {
+    					console.log("No more entries");
+  					}
+				};
+			};
+
+			transaction.onerror = function(e){
+				console.log(e);
+				console.log("Transaction is complete: Error");
+			}
+		}
+
+		function requestValues(){
+			var obj = new Object();
+			obj.name  = document.querySelector("#name").value;
+			obj.email = document.querySelector("#email").value;
+
+			return obj;
+		}
+
+		document.addEventListener("DOMContentLoaded", init, false);
+	</script>
+</head>
+<body>
+	<input id="name"  type="text" placeholder="Name">
+	<input id="email" type="text" placeholder="email">
+	<button type="button" id="add">Add</button>
+
+	<table>
+		<thead></thead>
+		<tbody></tbody>
+
+	</table>
+</body>
+</html>
