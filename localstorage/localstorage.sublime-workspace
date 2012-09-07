@@ -4,6 +4,50 @@
 		"selected_items":
 		[
 			[
+				"ba",
+				"background-color"
+			],
+			[
+				"fon",
+				"font-style"
+			],
+			[
+				"marg",
+				"margin-left"
+			],
+			[
+				"fo",
+				"font-weight"
+			],
+			[
+				"mar",
+				"margin-left"
+			],
+			[
+				"margin-",
+				"margin-bottom"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"time",
+				"timeStamp"
+			],
+			[
+				"con",
+				"continue"
+			],
+			[
+				"va",
+				"value"
+			],
+			[
+				"open",
+				"openDBRequest"
+			],
+			[
 				"if",
 				"ife	if … else"
 			],
@@ -19,8 +63,25 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 604,
+				"buffer_size": 8271,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "style.css",
+			"settings":
+			{
+				"buffer_size": 749,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "fonts.js",
+			"settings":
+			{
+				"buffer_size": 604,
+				"line_ending": "Unix",
+				"name": "<script type=\"text/javascript\">"
 			}
 		}
 	],
@@ -56,14 +117,15 @@
 	},
 	"file_history":
 	[
+		"/usr/local/src/proyectos/samples-of-html5/localstorage/index.html"
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 		]
@@ -90,12 +152,66 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
 					"file": "index.html",
+					"settings":
+					{
+						"buffer_size": 8271,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2123,
+								2123
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 102.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "style.css",
+					"settings":
+					{
+						"buffer_size": 749,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								297,
+								297
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "fonts.js",
 					"settings":
 					{
 						"buffer_size": 604,
@@ -105,13 +221,16 @@
 						"selection":
 						[
 							[
-								389,
-								389
+								135,
+								135
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.tmLanguage"
+							"auto_name": "<script type=\"text/javascript\">",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -176,7 +295,7 @@
 	},
 	"show_minimap": true,
 	"show_open_files": false,
-	"show_tabs": true,
+	"show_tabs": false,
 	"side_bar_visible": true,
 	"side_bar_width": 150.0,
 	"status_bar_visible": true

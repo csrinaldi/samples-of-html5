@@ -1,0 +1,59 @@
+h1 { 
+	font-family: 'Oregano', cursive, Arial, serif; 
+	font-weight: 400; 
+	text-align: center;
+}
+
+table{
+	width: 100%;
+}
+
+h2{
+	font-family: 'Life+Savers', cursive;
+	font-weight: 8px;
+}
+
+p{
+	font-family: 'serif';
+	font-weight: 8px;
+}
+
+.yes{
+	background-color: green;
+}
+
+.no{
+	background-color: red;	
+}
+
+.compat-table {
+    border-color: #BBBBBB;
+    margin: 0;
+    border: 1px solid #BBBBBB;
+    border-collapse: collapse;
+}
+
+.comment{
+	border: 1px solid rgba(0, 0, 0, .2);
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	width: 35%;
+	float: left;
+}
+
+.data{
+	margin-bottom: 20px;
+}
+
+.data, .data-list{
+	border: 1px solid rgba(0, 0, 0, .2);
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	padding: 10px;
+}
+
+.container{
+	float: right;
+	width: 60%;
+}
+
