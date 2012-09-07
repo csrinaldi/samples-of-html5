@@ -8,7 +8,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 
         <script type="text/javascript">
-
+            window.version = "3";
             window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
             var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
             var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
@@ -16,7 +16,7 @@
 
             function init(){
                 //Abriendo la Base de datos, donde explicitamos la version
-                var openDBRequest = window.indexedDB.open("myDatabase", 3);
+                var openDBRequest = window.indexedDB.open("myDatabase", window.version);
 			
                 //Este evento es disparado cuando la version cambia y es necesario
                 //hacer un cambio en la estructura de la base de datos
@@ -35,27 +35,56 @@
                 openDBRequest.onsuccess = function(e){
                     try{
                         window.db = e.target.result;
-                        console.log("Data Base open: Success");
-                        console.log("Load data: Running ...");
-                        var tran = window.db.transaction(["person"], "readonly");
-                        var obj = tran.objectStore("person");
                         
-                        var cursorRequest = obj.openCursor();
-                        cursorRequest.onsuccess = function(e){
-                            var cursor = e.target.result;
-                            if(cursor == false)
-                                return;
-                            addRow(cursor.value);
-                            cursor.continue();
-                        };
-                        console.log("Load data: Success");
+                        //Si no esta creado es porque no se ejecuto el evento "onupgradeneeded"
+                        if(!window.db.objectStoreNames.contains("person")){
+                            var versionRequest = window.db.setVersion(window.version);
+                            versionRequest.onsuccess = function(e) {
+                                var objectStore = window.db.createObjectStore("person", {keyPath: "timeStamp"});
+                                objectStore.createIndex("name", "name", { unique: false });
+                                objectStore.createIndex("email", "email", { unique: true });
+                                e.target.transaction.oncomplete = function(e){
+                                    console.log("ObjectStore create: Success");
+                                    loadAllData();
+                                }
+                                
+                                
+                            }
+                            versionRequest.onerror = function(e){
+                                console.log("Setting version: Error");
+                            }
+                        }else{
+                            loadAllData();
+                        }
                     }catch(e){
-                        drawUnsupported();
+                        console.log(e);
                     }
+                }
+                
+                openDBRequest.onerror = function(e){
+                    console.log("Error opening Data Base");
+                    console.log(e);
                 }
 
                 document.querySelector("#add").addEventListener("click", handlePreSave, false);
                 document.querySelector("#clear").addEventListener("click", handleClear, false);
+            }
+            
+            function loadAllData(){
+                console.log("Data Base open: Success");
+                console.log("Load data: Running ...");
+                var tran = window.db.transaction(["person"], "readonly");
+                var obj = tran.objectStore("person");
+
+                var cursorRequest = obj.openCursor();
+                cursorRequest.onsuccess = function(e){
+                    var cursor = e.target.result;
+                    if(cursor == false)
+                        return;
+                    addRow(cursor.value);
+                    cursor.continue();
+                };
+                console.log("Load data: Success");
             }
 
             function handleClear(e){
@@ -176,9 +205,9 @@
         <h1>IndexedDB Example</h1>
         <div class="comment">
             <p>
-                El ejemplo funciona en Firefox ya que éste implementa la última versión del API de <a href="https://developer.mozilla.org/en-US/docs/IndexedDB">IndexedDB</a>. 
+                Ejemplo probado en Firefox y Google Chrome implementa la última versión del API de <a href="https://developer.mozilla.org/en-US/docs/IndexedDB">IndexedDB</a>.
+                y soporta además la vieja metodología de apertura de base de datos y seteo de versión.
             </p>
-            <p>Soporte del método onupgradeneeded: <span id="status" class="yes">Support</span>
         </div>
         <div class="container">
             <div class="data">
