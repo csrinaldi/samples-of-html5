@@ -4,10 +4,10 @@
 	<classpathentry kind="src" output="test-classes" path="test"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/cristian/Logikas/Frameworks/gin-2.0/gin-2.0.jar"/>
-	<classpathentry kind="lib" path="/home/cristian/Logikas/Frameworks/gin-2.0/aopalliance.jar"/>
-	<classpathentry kind="lib" path="/home/cristian/Logikas/Frameworks/gin-2.0/guice-3.0.jar"/>
-	<classpathentry kind="lib" path="/home/cristian/Logikas/Frameworks/gin-2.0/guice-assistedinject-3.0.jar"/>
-	<classpathentry kind="lib" path="/home/cristian/Logikas/Frameworks/gin-2.0/javax.inject.jar"/>
+	<classpathentry kind="lib" path="/usr/local/frameworks/gin-2.0/aopalliance.jar"/>
+	<classpathentry kind="lib" path="/usr/local/frameworks/gin-2.0/gin-2.0.jar"/>
+	<classpathentry kind="lib" path="/usr/local/frameworks/gin-2.0/guice-3.0.jar"/>
+	<classpathentry kind="lib" path="/usr/local/frameworks/gin-2.0/guice-assistedinject-3.0.jar"/>
+	<classpathentry kind="lib" path="/usr/local/frameworks/gin-2.0/javax.inject.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
