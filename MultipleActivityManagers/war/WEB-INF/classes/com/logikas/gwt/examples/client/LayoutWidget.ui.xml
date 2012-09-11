@@ -1,0 +1,31 @@
+
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style>
+    </ui:style>
+    
+    <ui:with field="res" type="com.logikas.kratos.main.client.resource.MainResourceBundle"/>
+    
+    <g:LayoutPanel>
+        <g:layer>
+            <g:SimplePanel ui:field="north" stylePrimaryName="{res.layoutStyle.northPanel}"/>
+        </g:layer>
+        <g:layer>
+            <g:SimplePanel ui:field="menuModule" stylePrimaryName="{res.layoutStyle.menuModule}"/>
+        </g:layer>
+        <g:layer>
+            <g:SimplePanel ui:field="west" stylePrimaryName="{res.layoutStyle.sideMenu}"/>
+        </g:layer>
+        <g:layer>
+            <g:ScrollPanel ui:field="center" stylePrimaryName="{res.layoutStyle.backgroundCenter}"/>
+        </g:layer>
+        <g:layer>
+            <g:SimplePanel ui:field="east"/>
+        </g:layer>
+        <g:layer>
+            <g:ScrollPanel ui:field="south"/>
+        </g:layer>
+        
+    </g:LayoutPanel>
+</ui:UiBinder> 

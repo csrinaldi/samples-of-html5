@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-devMode</actionName>
+            <displayName>devMode</displayName>
+            <goals>
+                <goal>gwt:run</goal>
+            </goals>
+            <properties>
+                <war>/home/cristian/Logikas/proyectos/samples-of-html5/elementalExample/target/elementalExample-1.0-SNAPSHOT</war>
+            </properties>
+        </action>
+        <action>
+            <actionName>CUSTOM-superDevMode</actionName>
+            <displayName>superDevMode</displayName>
+            <goals>
+                <goal>gwt:run-codeserver</goal>
+            </goals>
+        </action>
+    </actions>
