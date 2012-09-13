@@ -4,7 +4,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.inject.Provides;
@@ -20,6 +19,8 @@ import com.logikas.gwt.examples.client.widget.ClinicWidget;
 import com.logikas.gwt.examples.client.widget.PersonWidget;
 import com.logikas.gwt.examples.shared.place.OnePlaceHistoryMapper;
 import com.logikas.gwt.examples.shared.place.TwoPlaceHistoryMapper;
+
+
 
 public class MainClientModule extends AbstractGinModule{
 
@@ -46,7 +47,7 @@ public class MainClientModule extends AbstractGinModule{
             OnePlaceHistoryMapper historyMapper, EventBus eventBus) {
 
         PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(historyMapper);
-        historyHandler.register(placeController, eventBus, Place.NOWHERE);
+        historyHandler.register(placeController, eventBus, null);
         return historyHandler;
     }
 	
@@ -57,7 +58,7 @@ public class MainClientModule extends AbstractGinModule{
             TwoPlaceHistoryMapper historyMapper, EventBus eventBus) {
 
         PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(historyMapper);
-        historyHandler.register(placeController, eventBus, Place.NOWHERE);
+        historyHandler.register(placeController, eventBus, null);
         return historyHandler;
     }
 

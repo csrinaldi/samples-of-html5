@@ -63,7 +63,7 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 8271,
+				"buffer_size": 1420,
 				"line_ending": "Unix"
 			}
 		},
@@ -71,7 +71,7 @@
 			"file": "style.css",
 			"settings":
 			{
-				"buffer_size": 749,
+				"buffer_size": 771,
 				"line_ending": "Unix"
 			}
 		},
@@ -79,9 +79,20 @@
 			"file": "fonts.js",
 			"settings":
 			{
-				"buffer_size": 604,
+				"buffer_size": 564,
 				"line_ending": "Unix",
 				"name": "<script type=\"text/javascript\">"
+			}
+		},
+		{
+			"contents": "window.version = \"3\";\nwindow.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;\nvar IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;\nvar IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;\nwindow.db = null;\n\nfunction init(){\n    //Abriendo la Base de datos, donde explicitamos la version\n    var openDBRequest = window.indexedDB.open(\"myDatabase\", window.version);\n			\n    //Este evento es disparado cuando la version cambia y es necesario\n    //hacer un cambio en la estructura de la base de datos\n    openDBRequest.onupgradeneeded = function(e){\n        window.db = e.target.result;\n        //Creamos la Persona\n        if(!window.db.objectStoreNames.contains(\"person\")) {\n            var objectStore = window.db.createObjectStore(\"person\", {\n                keyPath: \"timeStamp\"\n            });\n            objectStore.createIndex(\"name\", \"name\", {\n                unique: false\n            });\n            objectStore.createIndex(\"email\", \"email\", {\n                unique: true\n            });\n            console.log(\"ObjectStore create: Success\");\n        }\n    }\n\n    //Este evento es disparado cuando la base de datos es abierta sin errores\n    openDBRequest.onsuccess = function(e){\n        try{\n            window.db = e.target.result;\n                        \n            //Si no esta creado es porque no se ejecuto el evento \"onupgradeneeded\"\n            if(!window.db.objectStoreNames.contains(\"person\")){\n                var versionRequest = window.db.setVersion(window.version);\n                versionRequest.onsuccess = function(e) {\n                    var objectStore = window.db.createObjectStore(\"person\", {\n                        keyPath: \"timeStamp\"\n                    });\n                    objectStore.createIndex(\"name\", \"name\", {\n                        unique: false\n                    });\n                    objectStore.createIndex(\"email\", \"email\", {\n                        unique: true\n                    });\n                    e.target.transaction.oncomplete = function(e){\n                        console.log(\"ObjectStore create: Success\");\n                        loadAllData();\n                    }\n                }\n                versionRequest.onerror = function(e){\n                    console.log(\"Setting version: Error\");\n                }\n            }else{\n                loadAllData();\n            }\n        }catch(e){\n            console.log(e);\n        }\n    }\n                \n    openDBRequest.onerror = function(e){\n        console.log(\"Error opening Data Base\");\n        console.log(e);\n    }\n\n    document.querySelector(\"#add\").addEventListener(\"click\", handlePreSave, false);\n    document.querySelector(\"#clear\").addEventListener(\"click\", handleClear, false);\n}\n            \nfunction loadAllData(){\n    console.log(\"Data Base open: Success\");\n    console.log(\"Load data: Running ...\");\n    var tran = window.db.transaction([\"person\"], \"readonly\");\n    var obj = tran.objectStore(\"person\");\n\n    var cursorRequest = obj.openCursor();\n    cursorRequest.onsuccess = function(e){\n        var cursor = e.target.result;\n        if(cursor == false)\n            return;\n        addRow(cursor.value);\n        cursor.continue();\n    };\n    console.log(\"Load data: Success\");\n}\n\nfunction handleClear(e){\n    var transaction = window.db.transaction([\"person\"], \"readwrite\");\n    var person = transaction.objectStore(\"person\");\n    var request = person.clear();\n                \n    transaction.oncomplete = function(){\n        console.log(\"Clear Database: Success\");\n        clearTable();\n    }\n}\n\nfunction clearTable(){\n    for(var i = document.querySelector(\"table\").rows.length; i > 0;i--){\n        document.querySelector(\"table\").deleteRow(i -1);\n    }           \n}\n\nfunction handlePreSave(e){\n    console.log(\"Manage localstorage from input values\");\n    var transaction = window.db.transaction([\"person\"], \"readwrite\");\n\n    var person = transaction.objectStore(\"person\");\n    var obj = requestValues();\n    var request = person.add({\n        \"timeStamp\":obj.timeStamp,\n        \"name\" : obj.name, \n        \"email\" : obj.email\n        });\n\n    request.onsuccess = function(e){\n        console.log(\"Request is complete: Success \");\n                    \n    }\n\n    request.onerror = function(e){\n        console.log(\"Request is complete: Error \");\n    }\n\n    transaction.oncomplete = function(e) {\n        addRow(obj);\n    };\n\n    transaction.onerror = function(e){\n        console.log(e);\n        console.log(\"Transaction is complete: Error\");\n    }\n}\n            \nfunction deleteRow(id){\n    console.log(\"Delete id: \"+id);\n    var trxDelete = window.db.transaction([\"person\"], \"readwrite\");\n    var person = trxDelete.objectStore(\"person\");\n\n    var requestDelete = person.delete(id);\n    requestDelete.onsuccess = function(e){\n        //row = document.querySelector(\"tr[id^='\"+obj.id+\"']\" );\n        var table = document.querySelector(\"table\");\n        var rowCount = table.rows.length;\n        var idx = 0;\n        var flag = false;\n        while(idx<rowCount && !flag) {\n            var row = table.rows[idx];\n            if ( row.id == id ){\n                table.deleteRow(idx);\n                flag = true;\n            }\n            idx++;\n        }\n    }\n\n    requestDelete.onerror = function(e){\n        console.log(\"Error in requestDelete\");\n    }\n\n    trxDelete.oncomplete = function(e){\n        console.log(\"Transaction is complete: Success\");\n        var trxDelete = window.db.transaction([\"person\"], \"readonly\");\n        var person = trxDelete.objectStore(\"person\");\n        var countRequest = person.count();\n        countRequest.onsuccess = function(e){\n            var result = e.target.result;\n            console.log(result + \"deleted\");\n        }\n    }\n}\n            \nfunction addRow(obj){\n    var table = document.querySelector(\"table\");\n    var row = table.insertRow(table.rows);\n    row.id = obj.timeStamp;\n    row.insertCell(0).innerHTML = obj.name;\n    row.insertCell(1).innerHTML = obj.email;\n    var rowdelete = row.insertCell(2);\n    var button = document.createElement(\"button\");\n    button.textContent = \"Delete\";\n\n    button.addEventListener(\"click\", function(){\n        deleteRow(obj.timeStamp);\n    }, false);\n\n    rowdelete.appendChild(button);\n}\n\nfunction requestValues(){\n    var obj = new Object();\n    obj.name  = document.querySelector(\"#name\").value;\n    obj.email = document.querySelector(\"#email\").value;\n    obj.timeStamp = new Date().getTime();\n    return obj;\n}\n\nfunction drawUnsupported(){\n    document.querySelector(\"span\").className = \"no\";\n}",
+			"file": "app.js",
+			"file_size": 6673,
+			"file_write_time": 1347356829000000,
+			"settings":
+			{
+				"buffer_size": 6607,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -125,7 +136,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 		]
@@ -152,7 +163,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -160,15 +171,15 @@
 					"file": "index.html",
 					"settings":
 					{
-						"buffer_size": 8271,
+						"buffer_size": 1420,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2123,
-								2123
+								0,
+								0
 							]
 						],
 						"settings":
@@ -188,23 +199,24 @@
 					"file": "style.css",
 					"settings":
 					{
-						"buffer_size": 749,
+						"buffer_size": 771,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								297,
-								297
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/CSS/CSS.tmLanguage"
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 255.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -214,26 +226,54 @@
 					"file": "fonts.js",
 					"settings":
 					{
-						"buffer_size": 604,
+						"buffer_size": 564,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								135,
-								135
+								0,
+								0
 							]
 						],
 						"settings":
 						{
 							"auto_name": "<script type=\"text/javascript\">",
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2,
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "app.js",
+					"settings":
+					{
+						"buffer_size": 6607,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2365,
+								2365
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 102.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
