@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"lin",
+				"lineData"
+			],
+			[
 				"ba",
 				"background-color"
 			],
@@ -94,6 +98,41 @@
 				"buffer_size": 6607,
 				"line_ending": "Unix"
 			}
+		},
+		{
+			"file": "/usr/local/frameworks/gwt/trunk/elemental/idl/scripts/databasebuilder.py",
+			"settings":
+			{
+				"buffer_size": 21545,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "#!/usr/bin/python\n# Copyright (c) 2011, the Dart project authors.  Please see the AUTHORS file\n# for details. All rights reserved. Use of this source code is governed by a\n# BSD-style license that can be found in the LICENSE file.\n\nimport re\nimport subprocess\nimport tempfile\nimport os\n\nfrom pegparser import *\n\n# IDL grammar variants.\nWEBIDL_SYNTAX = 0\nWEBKIT_SYNTAX = 1\nFREMONTCUT_SYNTAX = 2\n\n\nclass IDLParser(object):\n  \"\"\"IDLParser is a PEG based IDL files parser.\"\"\"\n\n  def __init__(self, syntax=WEBIDL_SYNTAX):\n    \"\"\"Constructor.\n\n    Initializes the IDLParser by defining the grammar and initializing\n    a PEGParserinstance.\n\n    Args:\n      syntax -- supports either WEBIDL_SYNTAX (0) or WEBKIT_SYNTAX (1)\n    \"\"\"\n    self._syntax = syntax\n    self._pegparser = PegParser(self._idl_grammar(),\n      self._whitespace_grammar(),\n      strings_are_tokens=True)\n\n  def _idl_grammar(self):\n    \"\"\"Returns the PEG grammar for IDL parsing.\"\"\"\n\n    # utilities:\n    def syntax_switch(w3c_syntax, webkit_syntax, fremontcut_syntax=None):\n      \"\"\"Returns w3c_syntax or web_syntax, depending on the current\n      configuration.\n      \"\"\"\n      if self._syntax == WEBIDL_SYNTAX:\n        return w3c_syntax\n      elif self._syntax == WEBKIT_SYNTAX:\n        return webkit_syntax\n      elif self._syntax == FREMONTCUT_SYNTAX:\n        if fremontcut_syntax is not None:\n          return fremontcut_syntax\n        return w3c_syntax\n      else:\n        raise RuntimeError('unsupported IDL syntax %s' % syntax)\n\n    # The following grammar is based on the Web IDL's LL(1) grammar\n    # (specified in: http://dev.w3.org/2006/webapi/WebIDL/#idl-grammar).\n    # It is adjusted to PEG grammar, as well as to also support\n    # WebKit IDL and FremontCut grammar.\n\n    ###################### BEGIN GRAMMAR #####################\n\n    def Id():\n      return re.compile(r'[\\w\\_]+')\n\n    def _Definitions():\n      return MAYBE(MANY(_Definition))\n\n    def _Definition():\n      return syntax_switch(\n        # Web IDL:\n        OR(Module, Interface, ExceptionDef, TypeDef, ImplStmt,\n           ValueTypeDef, Const),\n        # WebKit:\n        OR(Module, Interface))\n\n    def Module():\n      return syntax_switch(\n        # Web IDL:\n        [MAYBE(ExtAttrs), 'module', Id, '{', _Definitions, '}',\n         MAYBE(';')],\n        # WebKit:\n        ['module', MAYBE(ExtAttrs), Id, '{', _Definitions, '}',\n         MAYBE(';')],\n        # FremontCut:\n        [MAYBE(_Annotations), MAYBE(ExtAttrs), 'module', Id,\n         '{', _Definitions, '}', MAYBE(';')])\n\n    def Interface():\n      return syntax_switch(\n        # Web IDL:\n        [MAYBE(ExtAttrs), 'interface', Id, MAYBE(_ParentInterfaces),\n         MAYBE(['{', MAYBE(MANY(_Member)), '}']), ';'],\n        # WebKit:\n        [OR('interface', 'exception'), MAYBE(ExtAttrs), Id, MAYBE(_ParentInterfaces),\n         MAYBE(['{', MAYBE(MANY(_Member)), '}']), MAYBE(';')],\n        # FremontCut:\n        [MAYBE(_Annotations), MAYBE(ExtAttrs), 'interface',\n         Id, MAYBE(_ParentInterfaces), MAYBE(['{', MAYBE(MANY(_Member)),\n         '}']), ';'])\n\n    def _Member():\n      return syntax_switch(\n        # Web IDL:\n        OR(Const, Attribute, Operation, ExtAttrs),\n        # WebKit:\n        OR(Const, Attribute, Operation),\n        # FremontCut:\n        OR(Const, Attribute, Operation))\n\n    # Interface inheritance:\n    def _ParentInterfaces():\n      return [':', MANY(ParentInterface, separator=',')]\n\n    def ParentInterface():\n      return syntax_switch(\n        # Web IDL:\n        [InterfaceType],\n        # WebKit:\n        [InterfaceType],\n        # FremontCut:\n        [MAYBE(_Annotations), InterfaceType])\n\n    # TypeDef (Web IDL):\n    def TypeDef():\n      return ['typedef', Type, Id, ';']\n\n    # TypeDef (Old-school W3C IDLs)\n    def ValueTypeDef():\n      return ['valuetype', Id, Type, ';']\n\n    # Implements Statement (Web IDL):\n    def ImplStmt():\n      return [ImplStmtImplementor, 'implements', ImplStmtImplemented,\n          ';']\n\n    def ImplStmtImplementor():\n      return ScopedName\n\n    def ImplStmtImplemented():\n      return ScopedName\n\n    # Constants:\n    def Const():\n      return syntax_switch(\n        # Web IDL:\n        [MAYBE(ExtAttrs), 'const', Type, Id, '=', ConstExpr, ';'],\n        # WebKit:\n        [MAYBE(ExtAttrs), 'const', Type, Id, '=', ConstExpr, ';'],\n        # FremontCut:\n        [MAYBE(_Annotations), MAYBE(ExtAttrs), 'const', Type, Id, '=',\n         ConstExpr, ';'])\n\n    def ConstExpr():\n      return OR(_BooleanLiteral,\n            _IntegerLiteral,\n            _FloatLiteral)\n\n    def _BooleanLiteral():\n      return re.compile(r'true|false')\n\n    def _IntegerLiteral():\n      return OR(re.compile(r'(0x)?[0-9ABCDEF]+'),\n            re.compile(r'[0-9]+'))\n\n    def _FloatLiteral():\n      return re.compile(r'[0-9]+\\.[0-9]*')\n\n    # Attributes:\n    def Attribute():\n      return syntax_switch(\n        # Web IDL:\n        [MAYBE(ExtAttrs), MAYBE(Stringifier), MAYBE(ReadOnly),\n         'attribute', Type, Id, MAYBE(_AttrRaises), ';'],\n        # WebKit:\n        [MAYBE(Stringifier), MAYBE(ReadOnly), 'attribute',\n         MAYBE(ExtAttrs), Type, Id, MAYBE(_AttrRaises), ';'],\n        # FremontCut:\n        [MAYBE(_Annotations), MAYBE(ExtAttrs),\n         MAYBE(_AttrGetterSetter), MAYBE(Stringifier), MAYBE(ReadOnly),\n         'attribute', Type, Id, MAYBE(_AttrRaises), ';'])\n\n    def _AttrRaises():\n      return syntax_switch(\n        # Web IDL:\n        MANY(OR(GetRaises, SetRaises)),\n        # WebKit:\n        MANY(OR(GetRaises, SetRaises, Raises), separator=','))\n\n    # Special fremontcut feature:\n    def _AttrGetterSetter():\n      return OR(AttrGetter, AttrSetter)\n\n    def AttrGetter():\n      return 'getter'\n\n    def AttrSetter():\n      return 'setter'\n\n    def ReadOnly():\n      return 'readonly'\n\n    def GetRaises():\n      return syntax_switch(\n        # Web IDL:\n        ['getraises', '(', _ScopedNames, ')'],\n        # WebKit:\n        ['getter', 'raises', '(', _ScopedNames, ')'])\n\n    def SetRaises():\n      return syntax_switch(\n        # Web IDL:\n        ['setraises', '(', _ScopedNames, ')'],\n        # WebKit:\n        ['setter', 'raises', '(', _ScopedNames, ')'])\n\n    # Operation:\n    def Operation():\n      return syntax_switch(\n        # Web IDL:\n        [MAYBE(ExtAttrs), MAYBE(Static), MAYBE(Stringifier), MAYBE(_Specials),\n         ReturnType, MAYBE(Id), '(', _Arguments, ')', MAYBE(Raises),\n         ';'],\n        # WebKit:\n        [MAYBE(ExtAttrs), MAYBE(Static),\n         ReturnType, MAYBE(Id), '(', _Arguments, ')',\n         MAYBE(Raises), ';'],\n        # FremontCut:\n        [MAYBE(_Annotations), MAYBE(ExtAttrs), MAYBE(Static), MAYBE(Stringifier),\n         MAYBE(_Specials), ReturnType, MAYBE(Id), '(', _Arguments, ')',\n         MAYBE(Raises), ';'])\n\n    def Static():\n      return 'static'\n\n    def _Specials():\n      return MANY(Special)\n\n    def Special():\n      return re.compile(r'getter|setter|creator|deleter|caller')\n\n    def Stringifier():\n      return 'stringifier'\n\n    def Raises():\n      return ['raises', '(', _ScopedNames, ')']\n\n    # Operation arguments:\n    def _Arguments():\n      return MAYBE(MANY(Argument, ','))\n\n    def Argument():\n      return syntax_switch(\n        # Web IDL:\n        [MAYBE(ExtAttrs), MAYBE(Optional), MAYBE('in'),\n         MAYBE(Optional), Type, MAYBE(AnEllipsis), Id],\n        # WebKit:\n        [MAYBE(Optional), MAYBE('in'), MAYBE(Optional),\n         MAYBE(ExtAttrs), Type, Id])\n\n    def Optional():\n      return 'optional'\n\n    def AnEllipsis():\n      return '...'\n\n    # Exceptions (Web IDL).\n    def ExceptionDef():\n      return ['exception', Id, '{', MAYBE(MANY(_ExceptionMember)), '}',\n          ';']\n\n    def _ExceptionMember():\n      return OR(Const, ExceptionField, ExtAttrs)\n\n    def ExceptionField():\n      return [Type, Id, ';']\n\n    # Types:\n    def Type():\n      return _Type\n\n    def ReturnType():\n      return OR(VoidType, _Type)\n\n    def InterfaceType():\n      return ScopedName\n\n    def _Type():\n      return OR(AnyArrayType, AnyType, ObjectType, _NullableType)\n\n    def _NullableType():\n      return [OR(_IntegerType, BooleanType, OctetType, FloatType,\n             DoubleType, SequenceType, DOMStringArrayType, ScopedName),\n          MAYBE(Nullable)]\n\n    def Nullable():\n      return '?'\n\n    def SequenceType():\n      return ['sequence', '<', Type, '>']\n\n    def AnyType():\n      return 'any'\n\n    def AnyArrayType():\n      # TODO(sra): Do more general handling of array types.\n      return 'any[]'\n\n    def ObjectType():\n      return re.compile(r'(object|Object)\\b')   # both spellings.\n\n    def VoidType():\n      return 'void'\n\n    def _IntegerType():\n      return [MAYBE(Unsigned), OR(ByteType, IntType, LongLongType,\n                    LongType, OctetType, ShortType)]\n\n    def Unsigned():\n      return 'unsigned'\n\n    def ShortType():\n      return 'short'\n\n    def LongLongType():\n      return ['long', 'long']\n\n    def LongType():\n      return 'long'\n\n    def IntType():\n      return 'int'\n\n    def ByteType():\n      return 'byte'\n\n    def OctetType():\n      return 'octet'\n\n    def BooleanType():\n      return 'boolean'\n\n    def FloatType():\n      return 'float'\n\n    def DoubleType():\n      return 'double'\n\n    def _ScopedNames():\n      return MANY(ScopedName, separator=',')\n\n    def ScopedName():\n      return re.compile(r'[\\w\\_\\:\\.\\<\\>]+')\n\n    def DOMStringArrayType():\n      return 'DOMString[]'\n\n    # Extended Attributes:\n    def ExtAttrs():\n      return ['[', MAYBE(MANY(ExtAttr, ',')), ']']\n\n    def ExtAttr():\n      return [Id, MAYBE(OR(['=', ExtAttrValue], ExtAttrArgList))]\n\n    def ExtAttrValue():\n      return OR(ExtAttrFunctionValue, re.compile(r'[\\w&0-9:\\-\\|]+'))\n\n    def ExtAttrFunctionValue():\n      return [Id, ExtAttrArgList]\n\n    def ExtAttrArgList():\n      return ['(', MAYBE(MANY(Argument, ',')), ')']\n\n    # Annotations - used in the FremontCut IDL grammar:\n    def _Annotations():\n      return MANY(Annotation)\n\n    def Annotation():\n      return ['@', Id, MAYBE(_AnnotationBody)]\n\n    def _AnnotationBody():\n      return ['(', MAYBE(MANY(AnnotationArg, ',')), ')']\n\n    def AnnotationArg():\n      return [Id, MAYBE(['=', AnnotationArgValue])]\n\n    def AnnotationArgValue():\n      return re.compile(r'[\\w&0-9:/\\-\\.]+')\n\n    ###################### END GRAMMAR #####################\n\n    # Return the grammar's root rule:\n    return MANY(_Definition)\n\n  def _whitespace_grammar(self):\n    return OR(re.compile(r'\\s+'),\n          re.compile(r'//.*'),\n          re.compile(r'#.*'),\n          re.compile(r'/\\*.*?\\*/', re.S))\n\n  def _pre_process(self, content, defines, includePaths):\n    \"\"\"Pre-processes the content using gcc.\n\n    WebKit IDLs require pre-processing by gcc. This is done by invoking\n    gcc in a sub-process and capturing the results.\n\n    Returns:\n      The result of running gcc on the content.\n\n    Args:\n      content -- text to process.\n      defines -- an array of pre-processor defines.\n      includePaths -- an array of path strings.\n    \"\"\"\n    # FIXME: Handle gcc not found, or any other processing errors\n    gcc = os.environ.get('CC', None)\n    if not gcc:\n      gcc = 'gcc'\n    cmd = [gcc, '-E', '-P', '-C', '-x', 'c++'];\n    for define in defines:\n      cmd.append('-D%s' % define)\n\n    cmd.append('-')\n    pipe = subprocess.Popen(cmd, stdin=subprocess.PIPE,\n      stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    (content, stderr) = pipe.communicate(content)\n    return content\n\n  def parse(self, content, defines=[], includePaths=[]):\n    \"\"\"Parse the give content string.\n\n    The WebKit IDL syntax also allows gcc pre-processing instructions.\n    Lists of defined variables and include paths can be provided.\n\n    Returns:\n      An abstract syntax tree (AST).\n\n    Args:\n      content -- text to parse.\n      defines -- an array of pre-processor defines.\n      includePaths -- an array of path strings used by the\n        gcc pre-processor.\n    \"\"\"\n    if self._syntax == WEBKIT_SYNTAX:\n      content = self._pre_process(content, defines, includePaths)\n\n    return self._pegparser.parse(content)\n",
+			"file": "/usr/local/frameworks/gwt/trunk/elemental/idl/scripts/idlparser.py",
+			"file_size": 12021,
+			"file_write_time": 1347538364000000,
+			"settings":
+			{
+				"buffer_size": 12021,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/usr/local/frameworks/gwt/trunk/elemental/idl/scripts/idlparser.dart",
+			"settings":
+			{
+				"buffer_size": 17814,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/usr/local/frameworks/gwt/trunk/elemental/idl/scripts/pegparser.py",
+			"settings":
+			{
+				"buffer_size": 15689,
+				"line_ending": "Unix"
+			}
 		}
 	],
 	"build_system": "",
@@ -146,6 +185,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"_root_rule.match",
+			"_pre_process",
+			"DatabaseBuilderOptions",
+			"_load_idl_file"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -163,7 +206,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 7,
 			"sheets":
 			[
 				{
@@ -274,6 +317,118 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 102.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/usr/local/frameworks/gwt/trunk/elemental/idl/scripts/databasebuilder.py",
+					"settings":
+					{
+						"buffer_size": 21545,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8550,
+								8550
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3842.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/usr/local/frameworks/gwt/trunk/elemental/idl/scripts/idlparser.py",
+					"settings":
+					{
+						"buffer_size": 12021,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12005,
+								12005
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6761.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/usr/local/frameworks/gwt/trunk/elemental/idl/scripts/idlparser.dart",
+					"settings":
+					{
+						"buffer_size": 17814,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/usr/local/frameworks/gwt/trunk/elemental/idl/scripts/pegparser.py",
+					"settings":
+					{
+						"buffer_size": 15689,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								15582,
+								15582
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2333.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
