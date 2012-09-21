@@ -1,0 +1,4 @@
+name: juglar_network
+dependencies:
+  args:
+    #git: git://github.com/munificent/handle_stache.git

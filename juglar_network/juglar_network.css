@@ -1,0 +1,65 @@
+
+body {
+ 	padding: 0;
+	margin: 0;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+p {
+  color: #333;
+}
+
+#container {
+  width: 100%;
+  height: 100%;
+}
+
+#selector {
+  width: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid #CCC;
+  padding: 10px;
+}
+
+::-webkit-scrollbar{
+	width: 5px;
+	height: 5px;
+	background-color: #EEE;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 5px;
+}
+
+#content{
+	display: -webkit-box;
+	display: -moz-box;
+	display: box;
+	-webkit-box-orient: vertical;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	-moz-box-orient: vertical;
+	-moz-box-pack: center;
+	-moz-box-align: center;
+	box-orient: vertical;
+	box-pack: center;
+	box-align: center;
+	background: -webkit-gradient(linear, left bottom, left top, from(#CCC), color-stop(0.25, #EEE), to(#CCC), color-stop(0.75, #EEE));
+-webkit-box-shadow: inset 0 0 15px black;
+}
+
+input, input[type="password"], input[type="search"], isindex {
+	-webkit-appearance: textfield;
+	padding: 1px;
+	background-color: white;
+	border: 2px inset;
+	border-image: initial;
+	-webkit-rtl-ordering: logical;
+	-webkit-user-select: text;
+	cursor: auto;
+}
+

@@ -1,0 +1,167 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="explorer.css">
+  </head>
+  <body>
+    <div id="bar">
+    	<input type="file" id="file_input" webkitdirectory="" directory="">
+    	<ul></ul>
+    </div>
+
+    <div id="explorer">
+      <div style="width:100%; height:100%">
+    	   <div id="explorer-error"></div>
+         <div id="drop-zone">Arrastra archivos aquí</div>
+    	   <div id="explorer-nav"></div>
+    	   <div id="explorer-view"></div>
+      </div>
+    </div>
+
+
+    <script>
+      window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+      var fs = null;
+      
+      function errorHandler(e) {
+        var msg = '';
+        switch (e.code) {
+          case FileError.QUOTA_EXCEEDED_ERR:
+            msg = 'QUOTA_EXCEEDED_ERR';
+            break;
+          case FileError.NOT_FOUND_ERR:
+            msg = 'NOT_FOUND_ERR';
+            break;
+          case FileError.SECURITY_ERR:
+            msg = 'SECURITY_ERR';
+            break;
+          case FileError.INVALID_MODIFICATION_ERR:
+            msg = 'INVALID_MODIFICATION_ERR';
+            break;
+          case FileError.INVALID_STATE_ERR:
+            msg = 'INVALID_STATE_ERR';
+            break;
+          default:
+            msg = 'Unknown Error';
+            break;
+        };
+        document.querySelector('#explorer-error').innerHTML = 'Error: ' + msg;
+      }
+      
+      function initFS() {
+        window.requestFileSystem(window.TEMPORARY, 1024*1024, function(filesystem) {
+          fs = filesystem;
+        }, errorHandler);
+      }
+      
+      var buttons = document.querySelectorAll('#example-list-fs button');
+      var filelist = document.querySelector('#example-list-fs-ul');
+      
+      if (buttons.length >= 3) {
+        buttons[0].addEventListener('click', function(e) {
+          if (!fs) {
+            return;
+          }
+          fs.root.getFile('log.txt', {create: true}, null, errorHandler);
+          fs.root.getFile('song.mp3', {create: true}, null, errorHandler);
+          fs.root.getDirectory('mypictures', {create: true}, null, errorHandler);
+          filelist.innerHTML = 'Files created.';
+        }, false);
+      
+        buttons[1].addEventListener('click', function(e) {
+          if (!fs) {
+            return;
+          }
+      
+          var dirReader = fs.root.createReader();
+          dirReader.readEntries(function(entries) {
+            if (!entries.length) {
+              filelist.innerHTML = 'Filesystem is empty.';
+            } else {
+              filelist.innerHTML = '';
+            }
+      
+            var fragment = document.createDocumentFragment();
+            for (var i = 0, entry; entry = entries[i]; ++i) {
+              var img = entry.isDirectory ? '<img src="http://www.html5rocks.com/static/images/tutorials/icon-folder.gif">' :
+                                            '<img src="http://www.html5rocks.com/static/images/tutorials/icon-file.gif">';
+              var li = document.createElement('li');
+              li.innerHTML = [img, '<span>', entry.name, '</span>'].join('');
+              fragment.appendChild(li);
+            }
+            filelist.appendChild(fragment);
+          }, errorHandler);
+        }, false);
+      
+        buttons[2].addEventListener('click', function(e) {
+          if (!fs) {
+            return;
+          }
+      
+          var dirReader = fs.root.createReader();
+          dirReader.readEntries(function(entries) {
+            for (var i = 0, entry; entry = entries[i]; ++i) {
+              if (entry.isDirectory) {
+                entry.removeRecursively(function() {}, errorHandler);
+              } else {
+                entry.remove(function() {}, errorHandler);
+              }
+            }
+            filelist.innerHTML = 'Directory emptied.';
+          }, errorHandler);
+        }, false);
+      }
+      
+      function drop(e){
+        console.log(e);
+      }
+
+      function dragOver(e){
+        console.log(e);
+      }
+      
+      function dragExit(e){
+        console.log(e);
+      }
+      
+      function dragStart(e){
+        console.log(e);
+      }
+      
+      function initApp(){
+      	document.querySelector("#file_input").addEventListener('change', loadFile, false);
+        
+        var dropbox = document.querySelector("#drop-zone")
+ 
+        // init event handlers
+        dropbox.addEventListener("dragstart", dragStart, false);
+        dropbox.addEventListener("dragexit", dragExit, false);
+        dropbox.addEventListener("dragover", dragOver, false);
+        dropbox.addEventListener("drop", drop, false);
+        
+        /*dropzone.ondrop = function(e) {
+          console.log(e);
+
+          var length = e.dataTransfer.items.length;
+          for (var i = 0; i < length; i++) {
+            var entry = e.dataTransfer.items[i].webkitGetAsEntry();
+            if (entry.isFile) {
+              console.log("File");
+            } else if (entry.isDirectory) {
+              console.log("directory");
+            }
+          }
+        }*/
+      }
+
+      function loadFile(files){
+      	if ( window.requestFileSystem ){
+      		console.log("Load requestFileSystem SUCCESS");
+          initFS();
+      	}
+      }
+
+      window.addEventListener('load', initApp, false);
+
+    </script>
+  
+</body></html>
