@@ -8,7 +8,6 @@ import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.web.bindery.event.shared.EventBus;
 import com.logikas.gwt.examples.client.mvp.OneActivityManager;
 import com.logikas.gwt.examples.client.mvp.TwoActivityManager;
 
@@ -24,17 +23,13 @@ public class BootstrapImpl implements Bootstrap, PlaceChangeRequestEvent.Handler
 	@Inject
 	BootstrapImpl(@Named("onePlaceHandler")PlaceHistoryHandler onePlaceHistoryHandler, 
 				  @Named("twoPlaceHandler")PlaceHistoryHandler twoPlaceHistoryHandler,
-			     LayoutView mainLayout, OneActivityManager oneActivityManager,TwoActivityManager twoActivityManager,
-			     EventBus eventBus) {
+			     LayoutView mainLayout, OneActivityManager oneActivityManager,TwoActivityManager twoActivityManager
+			    ) {
 		this.mainLayout = mainLayout;
 		this.oneHistoryHandler = onePlaceHistoryHandler;
 		this.twoHistoryHandler = twoPlaceHistoryHandler;
 		oneActivityManager.setDisplay(mainLayout.getCenterRegion());
 		twoActivityManager.setDisplay(mainLayout.getCenterRegion());
-		
-		
-		eventBus.addHandler(PlaceChangeRequestEvent.TYPE, this);
-
 	}
 
 	@Override
