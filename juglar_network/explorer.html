@@ -1,167 +1,290 @@
 <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="explorer.css">
-  </head>
-  <body>
-    <div id="bar">
-    	<input type="file" id="file_input" webkitdirectory="" directory="">
-    	<ul></ul>
-    </div>
+    <head>
+        <link rel="stylesheet" type="text/css" href="explorer.css">
+        <link rel="stylesheet" href="libs/jquery.treeview.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+        <script src="libs/jquery.treeview.js"></script>
 
-    <div id="explorer">
-      <div style="width:100%; height:100%">
-    	   <div id="explorer-error"></div>
-         <div id="drop-zone">Arrastra archivos aquí</div>
-    	   <div id="explorer-nav"></div>
-    	   <div id="explorer-view"></div>
-      </div>
-    </div>
+        <meta charset="UTF-8">
+
+    </head>
+    <body>
+        <div id="bar">
+            <input type="file" id="file_input" webkitdirectory="" directory="">
+            <ul id="nav-browser" class="filetree">
+                <li><span class="folder">/</span>
+                    <ul></ul>
+                </li>
+            </ul>
+        </div>
+
+        <div id="explorer">
+            <div style="width:100%; height:100%">
+                <div id="explorer-bar">
+                    <button id="clear">Clear FileSystem</button>
+                </div>
+                <div id="explorer-error"></div>
+                <div id="drop-zone" draggable="true">Arrastra archivos aquí</div>
+                <div id="explorer-nav"></div>
+                <div id="explorer-view"></div>
+            </div>
+        </div>
 
 
-    <script>
-      window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-      var fs = null;
+        <script>
+            window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+            var fs = null;
+            var path = "/";
       
-      function errorHandler(e) {
-        var msg = '';
-        switch (e.code) {
-          case FileError.QUOTA_EXCEEDED_ERR:
-            msg = 'QUOTA_EXCEEDED_ERR';
-            break;
-          case FileError.NOT_FOUND_ERR:
-            msg = 'NOT_FOUND_ERR';
-            break;
-          case FileError.SECURITY_ERR:
-            msg = 'SECURITY_ERR';
-            break;
-          case FileError.INVALID_MODIFICATION_ERR:
-            msg = 'INVALID_MODIFICATION_ERR';
-            break;
-          case FileError.INVALID_STATE_ERR:
-            msg = 'INVALID_STATE_ERR';
-            break;
-          default:
-            msg = 'Unknown Error';
-            break;
-        };
-        document.querySelector('#explorer-error').innerHTML = 'Error: ' + msg;
-      }
-      
-      function initFS() {
-        window.requestFileSystem(window.TEMPORARY, 1024*1024, function(filesystem) {
-          fs = filesystem;
-        }, errorHandler);
-      }
-      
-      var buttons = document.querySelectorAll('#example-list-fs button');
-      var filelist = document.querySelector('#example-list-fs-ul');
-      
-      if (buttons.length >= 3) {
-        buttons[0].addEventListener('click', function(e) {
-          if (!fs) {
-            return;
-          }
-          fs.root.getFile('log.txt', {create: true}, null, errorHandler);
-          fs.root.getFile('song.mp3', {create: true}, null, errorHandler);
-          fs.root.getDirectory('mypictures', {create: true}, null, errorHandler);
-          filelist.innerHTML = 'Files created.';
-        }, false);
-      
-        buttons[1].addEventListener('click', function(e) {
-          if (!fs) {
-            return;
-          }
-      
-          var dirReader = fs.root.createReader();
-          dirReader.readEntries(function(entries) {
-            if (!entries.length) {
-              filelist.innerHTML = 'Filesystem is empty.';
-            } else {
-              filelist.innerHTML = '';
+            function errorHandler(e) {
+                var msg = '';
+                switch (e.code) {
+                    case FileError.QUOTA_EXCEEDED_ERR:
+                        msg = 'QUOTA_EXCEEDED_ERR';
+                        break;
+                    case FileError.NOT_FOUND_ERR:
+                        msg = 'NOT_FOUND_ERR';
+                        break;
+                    case FileError.SECURITY_ERR:
+                        msg = 'SECURITY_ERR';
+                        break;
+                    case FileError.INVALID_MODIFICATION_ERR:
+                        msg = 'INVALID_MODIFICATION_ERR';
+                        break;
+                    case FileError.INVALID_STATE_ERR:
+                        msg = 'INVALID_STATE_ERR';
+                        break;
+                    default:
+                        msg = 'Unknown Error';
+                        break;
+                };
+                document.querySelector('#explorer-error').innerHTML = 'Error: ' + msg;
             }
       
-            var fragment = document.createDocumentFragment();
-            for (var i = 0, entry; entry = entries[i]; ++i) {
-              var img = entry.isDirectory ? '<img src="http://www.html5rocks.com/static/images/tutorials/icon-folder.gif">' :
-                                            '<img src="http://www.html5rocks.com/static/images/tutorials/icon-file.gif">';
-              var li = document.createElement('li');
-              li.innerHTML = [img, '<span>', entry.name, '</span>'].join('');
-              fragment.appendChild(li);
+            function initFS() {
+                window.requestFileSystem(window.TEMPORARY, 5*1024*1024, function(filesystem) {
+                    fs = filesystem;
+                    loadFs();
+                }, errorHandler);
             }
-            filelist.appendChild(fragment);
-          }, errorHandler);
-        }, false);
-      
-        buttons[2].addEventListener('click', function(e) {
-          if (!fs) {
-            return;
-          }
-      
-          var dirReader = fs.root.createReader();
-          dirReader.readEntries(function(entries) {
-            for (var i = 0, entry; entry = entries[i]; ++i) {
-              if (entry.isDirectory) {
-                entry.removeRecursively(function() {}, errorHandler);
-              } else {
-                entry.remove(function() {}, errorHandler);
-              }
+            
+            /**
+             * Carga el Fs en el caso de existir
+             **/
+            function loadFs(){
+                //root = document.querySelector("[id='nav-browser'] > li > ul");
+                generateTreeView(fs.root, $("#nav-browser"));
             }
-            filelist.innerHTML = 'Directory emptied.';
-          }, errorHandler);
-        }, false);
-      }
       
-      function drop(e){
-        console.log(e);
-      }
 
-      function dragOver(e){
-        console.log(e);
-      }
+            //var filelist = document.querySelector('#example-list-fs-ul');
       
-      function dragExit(e){
-        console.log(e);
-      }
       
-      function dragStart(e){
-        console.log(e);
-      }
+            /*      var fragment = document.createDocumentFragment();
+                for (var i = 0, entry; entry = entries[i]; ++i) {
+                  var img = entry.isDirectory ? '<img src="http://www.html5rocks.com/static/images/tutorials/icon-folder.gif">' :
+                                                '<img src="http://www.html5rocks.com/static/images/tutorials/icon-file.gif">';
+                  var li = document.createElement('li');
+                  li.innerHTML = [img, '<span>', entry.name, '</span>'].join('');
+                  fragment.appendChild(li);
+                }
+                filelist.appendChild(fragment);
+             */
+
+            function drop(e){
+                if (e.stopPropagation) {
+                    e.stopPropagation(); // stops the browser from redirecting.
+                }
+                e.preventDefault();
+                var length = e.dataTransfer.items.length;
+                var entries = new Array();
+                
+                for (var i = 0; i < length; i++) {
+                    entries[i] = e.dataTransfer.items[i].webkitGetAsEntry();
+                }
+                createStructureFs(entries, path);
+                
+                var root = document.querySelector("[id='nav-browser'] > li > ul");
+                generateTreeView(fs.root, root);
+
+                return false;
+            }
+            
+            /**
+             * <li>
+             *   <span class="file">Item 1.1</span>
+             * </li>
+             **/
+            function generateFileView(entry){
+                var li = document.createElement("li");
+                li.id = entry.fullpath;
+                var span = document.createElement("span");
+                span.className = "file";
+                span.innerHTML = entry.name;
+                
+                li.appendChild(span);
+                
+                return li;
+            }
+            
+            /**
+             * <li>
+             *      <span class="folder">Folder 1</span>
+             *      <ul>
+             *          <li>
+             *              <span class="file">Item 1.1</span>
+             *          </li>
+             *      </ul>
+             *  </li>
+             **/
+            function generateFolderView(entry){
+                var li = document.createElement("li");
+                li.className = "closed";
+                li.id = entry.fullpath;
+                var span = document.createElement("span");
+                span.className = "folder";
+                span.innerHTML = entry.name;
+                var ul = document.createElement("ul");
+                
+                li.appendChild(span);
+                li.appendChild(ul);
+                
+                return li;
+                
+            }
+            
+            /**
+             * Genera el treeView con el contenido del FileSystem.
+             * @param rootElement representa el elemento raiz donde se tendra que
+             * poner los hijos.
+             **/
+            function generateTreeView(entry, rootElement){
+                var dirReader = entry.createReader();
+                var dirs = [];
+                dirReader.readEntries(function(dirs){
+                    console.log(entry.name);
+                    
+                    for (var i=0; i<dirs.length;i++){
+                        var tmp = dirs[i];
+                        console.log(tmp.name);
+                        if (tmp.isDirectory){
+                            var view = generateFolderView(tmp);
+                            //generateTreeView(tmp, view.children[1]);
+                            $('#nav-browser').treeview({add : view});
+                        }else{
+                            var view = generateFileView(tmp);
+                            $('#nav-browser').treeview({add : view});
+                        }
+                        
+                    }
+                });
+            }
+
+            /**
+             * Crea la estructura de directorios a partir de las entradas que existen en 
+             * entries
+             **/
+            function createStructureFs(entries, pathRoot){
+                var length = entries.length;
+                for (var i = 0; i < length; i++) {
+                    var entry = entries[i];
+          
+                    if (entry.isFile) {
+                        fs.root.getFile(entry.fullPath, {create:true}, function(e){
+                            console.log(entry.name + "created");
+                        },errorHandler);
+                    } else if (entry.isDirectory) {
+                        fs.root.getDirectory(entry.fullPath, {create:true}, function(e){
+                            var dirReader = entry.createReader();
+                            var dirs = [];
+                            dirReader.readEntries(function(dirs){
+                                for (var i=0; i<dirs.length;i++){
+                                    var entry = dirs[i];
+                                    createStructureFs(entry, entry.fullPath);
+                                }
+                            }, function(e){
+                                console.log(e)
+                            });
+                        }, errorHandler);
+                    }
+                }
+            }
+
+            function dragOver(e){
+                if (e.preventDefault) {
+                    e.preventDefault(); // Necessary. Allows us to drop.
+                }
+                return false;
+            }
       
-      function initApp(){
-      	document.querySelector("#file_input").addEventListener('change', loadFile, false);
+            function dragLeave(e){
+                console.log("DRAG LEAVE");
+                document.querySelector("#drop-zone").classList.remove("over");
+            }
+      
+            function dragEnter(e){
+                console.log("DRAG ENTER");
+                document.querySelector("#drop-zone").classList.add("over");
+            }
+
+            function dragEnd(e){
+                console.log("DRAG END");
         
-        var dropbox = document.querySelector("#drop-zone")
+            }
+            
+            function clearFileSystem(){
+                if ( window.requestFileSystem ){
+                    var dirReader = fs.root.createReader();
+                    dirReader.readEntries(function(entries) {
+                        for (var i = 0, entry; entry = entries[i]; ++i) {
+                            if (entry.isDirectory) {
+                                entry.removeRecursively(function() {}, errorHandler);
+                            } else {    
+                                entry.remove(function() {}, errorHandler);
+                            }
+                        }
+                        
+                        var root = document.querySelector("[id='nav-browser'] > li > ul");
+                        var chiledren = root.childNodes;
+                        console.log(chiledren);
+                        for(var i=0; i < chiledren; i++){
+                            root.removeChild(chiledren[i]);
+                        }
+                        
+                        $("#nav-browser").treeview();
+                        
+                    }, errorHandler);
+                }
+            }
+      
+            function initApp(){
+                document.querySelector("#file_input").addEventListener('change', loadFile, false);
+                document.querySelector("#clear").addEventListener('click', clearFileSystem, false);
+        
+                var dropbox = document.querySelector("#drop-zone");
+
+                //document.querySelector("[id='nav-browser']").treeview();
+                $('#nav-browser').treeview();
  
-        // init event handlers
-        dropbox.addEventListener("dragstart", dragStart, false);
-        dropbox.addEventListener("dragexit", dragExit, false);
-        dropbox.addEventListener("dragover", dragOver, false);
-        dropbox.addEventListener("drop", drop, false);
-        
-        /*dropzone.ondrop = function(e) {
-          console.log(e);
+                // init event handlers
+                dropbox.addEventListener("dragenter", dragEnter, false);
+                dropbox.addEventListener("dragleave", dragLeave, false);
+                dropbox.addEventListener("dragover", dragOver, false);
+                dropbox.addEventListener("dragover", dragOver, false);
+                dropbox.addEventListener("drop", drop, false);
+                dropbox.addEventListener('dragend', dragEnd, false);
 
-          var length = e.dataTransfer.items.length;
-          for (var i = 0; i < length; i++) {
-            var entry = e.dataTransfer.items[i].webkitGetAsEntry();
-            if (entry.isFile) {
-              console.log("File");
-            } else if (entry.isDirectory) {
-              console.log("directory");
+                initFS();
+                
             }
-          }
-        }*/
-      }
 
-      function loadFile(files){
-      	if ( window.requestFileSystem ){
-      		console.log("Load requestFileSystem SUCCESS");
-          initFS();
-      	}
-      }
+            function loadFile(files){
 
-      window.addEventListener('load', initApp, false);
+                //initFS();
+            }
 
-    </script>
-  
-</body></html>
+            window.addEventListener('load', initApp, false);
+
+        </script>
+
+    </body></html>
