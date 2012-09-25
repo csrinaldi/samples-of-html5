@@ -1,9 +1,13 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="explorer.css">
-        <link rel="stylesheet" href="libs/jquery.treeview.css" />
+        <link rel="stylesheet" href="../libs/jstree1.0/dist/themes/default/style.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-        <script src="libs/jquery.treeview.js"></script>
+        <!--script src="libs/jquery.treeview.js"></script-->
+        <!--script src="../libs/jstree1.0/_lib/jquery.cookie.js"></script>
+        <script src="../libs/jstree1.0/_lib/jquery.hotkeys.js"></script-->
+        <script src="../libs/jstree1.0/dist/jstree.js"></script>
+
 
         <meta charset="UTF-8">
 
@@ -11,11 +15,13 @@
     <body>
         <div id="bar">
             <input type="file" id="file_input" webkitdirectory="" directory="">
-            <ul id="nav-browser" class="filetree">
-                <li><span class="folder">/</span>
-                    <ul></ul>
-                </li>
-            </ul>
+            <div id="nav-browser">
+                <ul>
+                    <li rel="folder_fs" id="root_fs">
+                        <a href="#" >Root FileSystem</a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div id="explorer">
@@ -91,24 +97,7 @@
                 filelist.appendChild(fragment);
              */
 
-            function drop(e){
-                if (e.stopPropagation) {
-                    e.stopPropagation(); // stops the browser from redirecting.
-                }
-                e.preventDefault();
-                var length = e.dataTransfer.items.length;
-                var entries = new Array();
-                
-                for (var i = 0; i < length; i++) {
-                    entries[i] = e.dataTransfer.items[i].webkitGetAsEntry();
-                }
-                createStructureFs(entries, path);
-                
-                var root = document.querySelector("[id='nav-browser'] > li > ul");
-                generateTreeView(fs.root, root);
-
-                return false;
-            }
+            
             
             /**
              * <li>
@@ -169,15 +158,57 @@
                         console.log(tmp.name);
                         if (tmp.isDirectory){
                             var view = generateFolderView(tmp);
-                            //generateTreeView(tmp, view.children[1]);
-                            $('#nav-browser').treeview({add : view});
                         }else{
                             var view = generateFileView(tmp);
-                            $('#nav-browser').treeview({add : view});
                         }
                         
                     }
                 });
+            }
+
+            function drop(e){
+                if (e.stopPropagation) {
+                    e.stopPropagation(); // stops the browser from redirecting.
+                }
+                e.preventDefault();
+                var length = e.dataTransfer.items.length;
+                var entries = new Array();
+                
+                for (var i = 0; i < length; i++) {
+                    entries[i] = e.dataTransfer.items[i].webkitGetAsEntry();
+                }
+                createStructureFs(entries, path);
+
+                addNode(entries, $("#root_fs"));
+                //var root = document.querySelector("[id='nav-browser'] > li > ul");
+                //generateTreeView(fs.root, root);
+
+                return false;
+            }
+
+            function addNode(entries, element){
+                console.log(entries);
+                var length = entries.length;
+                for (var i = 0; i < length; i++) {
+                    var entry = entries[i];
+          
+                    if (entry.isFile) {
+                        $.jstree._reference('#nav-browser').create_node(element, { "type" : "file" ,"icon" : "/src/pepe.png", "title" : entry.name, "li_attr" : { "id" : "25" } }, "inside", function(e){
+                                console.log("load node "+entry.name);
+                                console.log(e);
+                        });
+                    }else{
+                        console.log(entry);
+                        $.jstree._reference('#nav-browser').create_node(element, { "type" : "folder", "title" : entry.name, "li_attr" : { "id" : "23" } }, "inside", function(e){
+                                var dirReader = entry.createReader();
+                                var dirs = [];
+                                dirReader.readEntries(function(dirs){
+                                    addNode(dirs, $(e));
+                                });
+                            });
+                    }
+                }
+
             }
 
             /**
@@ -199,7 +230,8 @@
                             var dirs = [];
                             dirReader.readEntries(function(dirs){
                                 for (var i=0; i<dirs.length;i++){
-                                    var entry = dirs[i];
+                                    var entry = new Array();
+                                    entry[0] = dirs[i];
                                     createStructureFs(entry, entry.fullPath);
                                 }
                             }, function(e){
@@ -263,8 +295,36 @@
         
                 var dropbox = document.querySelector("#drop-zone");
 
-                //document.querySelector("[id='nav-browser']").treeview();
-                $('#nav-browser').treeview();
+                $("#nav-browser").jstree({ 
+
+                    'ui' : {
+                        'select_limit' : 1
+                    },
+
+                    "types" : {
+                        /*"valid_children" : [ "folder_fs" ],*/
+                        "types" : {
+                            "folder_fs" : {
+                                "icon" : { 
+                                    "image" : "http://static.jstree.com/v.1.0rc/_docs/_drive.png" 
+                                },
+                                "valid_children" : [ "folder" , "file" ],
+                                "max_depth" : 2,
+                                "hover_node" : false,
+                                "select_node" : function () {return false;}
+                            },
+                            "default" : {
+                                "valid_children" : [ "default" ]
+                            }
+                        }
+                    },
+
+                    "core" : { "initially_open" : [ "root_fs" ] },
+                    "plugins" : ["themes","html_data","dnd","ui","types"],                    
+                
+                }).bind("__ready.jstree.jstree", function (e, data) { 
+                    console.log("Loaded ...");
+                });
  
                 // init event handlers
                 dropbox.addEventListener("dragenter", dragEnter, false);
