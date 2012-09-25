@@ -28,6 +28,7 @@
             <div style="width:100%; height:100%">
                 <div id="explorer-bar">
                     <button id="clear">Clear FileSystem</button>
+                    <button id="list">List FileSystem</button>
                 </div>
                 <div id="explorer-error"></div>
                 <div id="drop-zone" draggable="true">Arrastra archivos aquí</div>
@@ -192,20 +193,21 @@
                 for (var i = 0; i < length; i++) {
                     var entry = entries[i];
           
+                    var dataPath =  entry.fullPath;
+                    dataPath = dataPath.replace("//", "///");
                     if (entry.isFile) {
-                        $.jstree._reference('#nav-browser').create_node(element, { "type" : "file" ,"icon" : "/src/pepe.png", "title" : entry.name, "li_attr" : { "id" : "25" } }, "inside", function(e){
-                                console.log("load node "+entry.name);
-                                console.log(e);
+                        $.jstree._reference('#nav-browser').create_node(element, { "type" : "file" ,"icon" : "/src/pepe.png", "title" : entry.name, "li_attr" : { "data-type" : "file", "data-path" : entry.fullPath } }, "inside", function(e){
+                            console.log();
                         });
                     }else{
                         console.log(entry);
-                        $.jstree._reference('#nav-browser').create_node(element, { "type" : "folder", "title" : entry.name, "li_attr" : { "id" : "23" } }, "inside", function(e){
-                                var dirReader = entry.createReader();
-                                var dirs = [];
-                                dirReader.readEntries(function(dirs){
-                                    addNode(dirs, $(e));
-                                });
+                        $.jstree._reference('#nav-browser').create_node(element, { "type" : "folder", "title" : entry.name, "li_attr" : { "data-type" : "file", "data-path" : entry.fullpath} }, "inside", function(e){
+                            var dirReader = entry.createReader();
+                            var dirs = [];
+                            dirReader.readEntries(function(dirs){
+                                addNode(dirs, $(e));
                             });
+                        });
                     }
                 }
 
@@ -229,11 +231,8 @@
                             var dirReader = entry.createReader();
                             var dirs = [];
                             dirReader.readEntries(function(dirs){
-                                for (var i=0; i<dirs.length;i++){
-                                    var entry = new Array();
-                                    entry[0] = dirs[i];
-                                    createStructureFs(entry, entry.fullPath);
-                                }
+                                createStructureFs(dirs, null);
+                                //}
                             }, function(e){
                                 console.log(e)
                             });
@@ -264,6 +263,19 @@
         
             }
             
+            /**
+             * Clear Tree representation of FileSystem
+             */
+            function clearTree(){
+               var childrens = $.jstree._reference('#nav-browser').get_children($("#root_fs"));
+               for (var i= 0; i<childrens.length; i++){
+                   $.jstree._reference('#nav-browser').delete_node(childrens[i]);
+               }
+            }
+            
+            /**
+             * Clear logical File System.
+             */
             function clearFileSystem(){
                 if ( window.requestFileSystem ){
                     var dirReader = fs.root.createReader();
@@ -275,23 +287,39 @@
                                 entry.remove(function() {}, errorHandler);
                             }
                         }
-                        
-                        var root = document.querySelector("[id='nav-browser'] > li > ul");
-                        var chiledren = root.childNodes;
-                        console.log(chiledren);
-                        for(var i=0; i < chiledren; i++){
-                            root.removeChild(chiledren[i]);
+                    }, errorHandler);
+                }
+            }
+            
+            /**
+             * Lista por consola el File Systema 
+             **/
+            function listFileSystem(dir){
+                if ( window.requestFileSystem ){
+                    var dirReader = dir.createReader();
+                    dirReader.readEntries(function(entries) {
+                        for (var i = 0, entry; entry = entries[i]; ++i) {
+                            if (entry.isDirectory) {
+                                console.log("Dir: " + entry.fullPath);
+                                listFileSystem(entry);
+                            } else {    
+                                console.log("File: " + entry.fullPath);
+                            }
                         }
-                        
-                        $("#nav-browser").treeview();
-                        
+                       
                     }, errorHandler);
                 }
             }
       
             function initApp(){
                 document.querySelector("#file_input").addEventListener('change', loadFile, false);
-                document.querySelector("#clear").addEventListener('click', clearFileSystem, false);
+                document.querySelector("#clear").addEventListener('click', function(e) {
+                    clearFileSystem();
+                    clearTree();
+                }, false);
+                document.querySelector("#list").addEventListener('click', function(e){ 
+                    listFileSystem( fs.root); 
+                }, false);
         
                 var dropbox = document.querySelector("#drop-zone");
 
@@ -318,13 +346,36 @@
                             }
                         }
                     },
+                    
+                    "dnd" : {
+                        "drop_finish" : function () { 
+                            alert("DROP"); 
+                        },
+                        "drag_check" : function (data) {
+                            if(data.r.attr("id") == "root_fs") {
+                                return false;
+                            }
+                            return { 
+                                after : false, 
+                                before : false, 
+                                inside : true 
+                            };
+                        },
+                        "drag_finish" : function (data) { 
+                            alert("DRAG OK"); 
+                            console.log(data);
+                        }
+                    },
 
                     "core" : { "initially_open" : [ "root_fs" ] },
-                    "plugins" : ["themes","html_data","dnd","ui","types"],                    
+                    "plugins" : ["themes","html_data","dnd","ui","types", "dnd"]                  
                 
                 }).bind("__ready.jstree.jstree", function (e, data) { 
                     console.log("Loaded ...");
+                }).bind("move_node.jstree", function (e, data) {
+                    //TODO MOVE File and Directories
                 });
+    
  
                 // init event handlers
                 dropbox.addEventListener("dragenter", dragEnter, false);
