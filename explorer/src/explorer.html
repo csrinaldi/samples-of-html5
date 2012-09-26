@@ -1,6 +1,7 @@
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="explorer.css">
+        <!--link rel="stylesheet" type="text/css" href="explorer.css"-->
+        <link rel="stylesheet" type="text/css" href="app.css">
         <link rel="stylesheet" href="../libs/jstree1.0/dist/themes/default/style.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
         <!--script src="libs/jquery.treeview.js"></script-->
@@ -13,35 +14,79 @@
 
     </head>
     <body>
-        <div id="bar">
-            <input type="file" id="file_input" webkitdirectory="" directory="">
-            <div id="nav-browser">
-                <ul>
-                    <li rel="folder_fs" id="root_fs">
-                        <a href="#" >Root FileSystem</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="explorer">
-            <div style="width:100%; height:100%">
-                <div id="explorer-bar">
-                    <button id="clear">Clear FileSystem</button>
-                    <button id="list">List FileSystem</button>
+        <div id="container">
+            <header>
+                <img src="images/icons/favicon.png" alt="HTML5 Filesystem Explorer" title="HTML5 Filesystem Explorer">
+                <h1>HTML5 <a href="http://www.html5rocks.com/tutorials/file/filesystem/" target="_blank">Filesystem</a> Explorer</h1>
+                <div>
+                    <span>
+                        <input type="checkbox" onclick="toggleLog()" id="toggle-log">
+                        <label for="toggle-log">Habilitar Log</label>
+                    </span>
+                    <span>Acciones: <a href="javascript:" data-accion="clear" onclick="clearFileSystem()" class="">Borrar FS</a> / <a href="javascript:" data-accion="list" onclick="listFileSystem(null)" class="active">Listar FS</a>
+                    </span>
+                    <span>
+                        <input type="file" id="file_input" class="button" webkitdirectory="" mozdirectory="" directory="" alt="Importar Directorio" title="Importar Directorio">
+                    </span>
+                    <span>
+                        <input type="text" id="entry-name" placeholder="nuevo.txt / directorio">
+                        <select id="entry-type" title="Seleccione para crear un nuevo Archivo o Directorio">
+                            <option value="dir">Directorio</option>
+                            <option value="file">Archivo</option>
+                        </select>
+                        <button id="createButton" onclick="createNewEntry()" title="Crea un nuevo Archivo o Directorio">Crear</button>
+                    </span>
                 </div>
-                <div id="explorer-error"></div>
-                <div id="drop-zone" draggable="true">Arrastra archivos aquí</div>
-                <div id="explorer-nav"></div>
-                <div id="explorer-view"></div>
-            </div>
-        </div>
+            </header>
 
+
+            <section>
+                <div style="display:-webkit-flex: 100%;margin: 25px 0 15px 0;">
+                    <div style="-webkit-flex: 1 0 55%;">
+                        <input type="text" id="cwd" disabled="" alt="Current directory path" title="Current directory path">
+                        <button id="openFsButton" onclick="refreshFolder()" alt="Refresh view" title="Refresh view" class="fakebutton">
+                            <div></div>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <div id="bar">
+                        <div id="nav-browser">
+                            <ul>
+                                <li rel="folder_fs" id="root_fs">
+                                    <a href="#" >Root FileSystem</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="explorer-container">
+                        <div id="explorer" draggable="true">
+                            <div style="width:100%; height:100%">
+                                <!--div id="explorer-error"></div-->
+                                <!--div id="drop-zone" draggable="true">Arrastra archivos aquí</div-->
+                                <div id="explorer-nav"></div>
+                                <!--div id="explorer-view"></div-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section style="clear:both">
+                <div id="log" class="">
+                    <button onclick="logger.clear()">Clear</button>
+                    <div>filesystem:http://html5-demos.appspot.com/temporary/<p>Opened: http_html5-demos.appspot.com_0:Temporary</p></div>
+                </div>
+            </section>
+
+            <footer></footer>
+
+        </div>
 
         <script>
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
             var fs = null;
-            var path = "/";
+            window.path = "/";
       
             function errorHandler(e) {
                 var msg = '';
@@ -76,11 +121,37 @@
             }
             
             /**
-             * Carga el Fs en el caso de existir
+             * Carga el Fs en el caso de existir.
+             * Genera el arbol de directorios y la vista en el explorador
              **/
             function loadFs(){
-                //root = document.querySelector("[id='nav-browser'] > li > ul");
-                generateTreeView(fs.root, $("#nav-browser"));
+                var dirReader = fs.root.createReader();
+                var dirs = [];
+                dirReader.readEntries(function(dirs){
+                    addNode(dirs, $("#root_fs"));
+                    addNodeExplorer(dirs);
+                }); 
+
+            }
+
+            function cd(path){
+
+            }
+
+            function view(path){
+
+            }
+
+            function mv(path){
+
+            }
+
+            function rm(path){
+
+            }
+
+            function refresh(path){
+
             }
       
 
@@ -98,50 +169,6 @@
                 filelist.appendChild(fragment);
              */
 
-            
-            
-            /**
-             * <li>
-             *   <span class="file">Item 1.1</span>
-             * </li>
-             **/
-            function generateFileView(entry){
-                var li = document.createElement("li");
-                li.id = entry.fullpath;
-                var span = document.createElement("span");
-                span.className = "file";
-                span.innerHTML = entry.name;
-                
-                li.appendChild(span);
-                
-                return li;
-            }
-            
-            /**
-             * <li>
-             *      <span class="folder">Folder 1</span>
-             *      <ul>
-             *          <li>
-             *              <span class="file">Item 1.1</span>
-             *          </li>
-             *      </ul>
-             *  </li>
-             **/
-            function generateFolderView(entry){
-                var li = document.createElement("li");
-                li.className = "closed";
-                li.id = entry.fullpath;
-                var span = document.createElement("span");
-                span.className = "folder";
-                span.innerHTML = entry.name;
-                var ul = document.createElement("ul");
-                
-                li.appendChild(span);
-                li.appendChild(ul);
-                
-                return li;
-                
-            }
             
             /**
              * Genera el treeView con el contenido del FileSystem.
@@ -172,6 +199,10 @@
                     e.stopPropagation(); // stops the browser from redirecting.
                 }
                 e.preventDefault();
+
+                document.querySelector("[id='explorer']").className = "";
+                document.querySelector("[id='explorer-container']").className = "";
+
                 var length = e.dataTransfer.items.length;
                 var entries = new Array();
                 
@@ -187,8 +218,40 @@
                 return false;
             }
 
+            function addNodeExplorer(entries){
+                var ul, li, fragment = document.createDocumentFragment();
+                ul = document.createElement('ul');
+                fragment.appendChild(ul);
+
+                var length = entries.length;
+                for (var i = 0; i < length; i++) {
+                    var entry = entries[i];
+                    li = document.createElement('li');
+                    a  = document.createElement('a');
+                    a.className = "folfer";
+                    img = document.createElement('img');
+                    a.appendChild(img);
+                    div = document.createElement('div');
+                    div.innerHTML = entry.name;
+                    a.appendChild(div);
+                    li.appendChild(a);
+                    ul.appendChild(li);
+                    if ( entry.isFile ){
+                        img.src = "img/mimetypes/text-plain.png";
+                        img.width = 32;
+                    }else{
+                        img.src = "img/folder.png";
+                        img.width = 32;
+                    }
+                }
+
+                document.querySelector('[id="explorer-nav"]').appendChild(fragment);
+            }
+
+            /**
+             * TODO Ver el tema de los iconos en el jsTree
+             **/
             function addNode(entries, element){
-                console.log(entries);
                 var length = entries.length;
                 for (var i = 0; i < length; i++) {
                     var entry = entries[i];
@@ -197,7 +260,7 @@
                     dataPath = dataPath.replace("//", "///");
                     if (entry.isFile) {
                         $.jstree._reference('#nav-browser').create_node(element, { "type" : "file" ,"icon" : "/src/pepe.png", "title" : entry.name, "li_attr" : { "data-type" : "file", "data-path" : entry.fullPath } }, "inside", function(e){
-                            console.log();
+                            console.log(entry);
                         });
                     }else{
                         console.log(entry);
@@ -232,7 +295,6 @@
                             var dirs = [];
                             dirReader.readEntries(function(dirs){
                                 createStructureFs(dirs, null);
-                                //}
                             }, function(e){
                                 console.log(e)
                             });
@@ -249,18 +311,26 @@
             }
       
             function dragLeave(e){
-                console.log("DRAG LEAVE");
-                document.querySelector("#drop-zone").classList.remove("over");
+                document.querySelector("[id='explorer']").className = "";
+                document.querySelector("[id='explorer-container']").className = "";
             }
       
             function dragEnter(e){
-                console.log("DRAG ENTER");
-                document.querySelector("#drop-zone").classList.add("over");
+                document.querySelector("[id='explorer']").className = "dropping";
+                document.querySelector("[id='explorer-container']").className = "dropping_background";
             }
 
             function dragEnd(e){
                 console.log("DRAG END");
         
+            }
+
+            /**
+             * Elimina el FileSystem y su representación gráfica.
+             */
+            function clearFileSystem(){
+                if ( clearLogicalFileSystem() )
+                    clearTree();
             }
             
             /**
@@ -276,7 +346,7 @@
             /**
              * Clear logical File System.
              */
-            function clearFileSystem(){
+            function clearLogicalFileSystem(){
                 if ( window.requestFileSystem ){
                     var dirReader = fs.root.createReader();
                     dirReader.readEntries(function(entries) {
@@ -287,8 +357,11 @@
                                 entry.remove(function() {}, errorHandler);
                             }
                         }
+
+                        return true;
                     }, errorHandler);
                 }
+                return false;
             }
             
             /**
@@ -313,15 +386,6 @@
       
             function initApp(){
                 document.querySelector("#file_input").addEventListener('change', loadFile, false);
-                document.querySelector("#clear").addEventListener('click', function(e) {
-                    clearFileSystem();
-                    clearTree();
-                }, false);
-                document.querySelector("#list").addEventListener('click', function(e){ 
-                    listFileSystem( fs.root); 
-                }, false);
-        
-                var dropbox = document.querySelector("#drop-zone");
 
                 $("#nav-browser").jstree({ 
 
@@ -376,7 +440,7 @@
                     //TODO MOVE File and Directories
                 });
     
- 
+                var dropbox = document.querySelector("[id='explorer']");
                 // init event handlers
                 dropbox.addEventListener("dragenter", dragEnter, false);
                 dropbox.addEventListener("dragleave", dragLeave, false);

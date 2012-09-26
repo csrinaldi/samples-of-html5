@@ -1,0 +1,7 @@
+http://html5-demos.appspot.com/static/filesystem/filer.js/demos/index.html
+http://updates.html5rocks.com/2011/08/Downloading-resources-in-HTML5-a-download
+http://www.html5rocks.com/es/tutorials/file/filesystem/
+http://www.html5rocks.com/en/tutorials/file/filesystem/
+http://www.html5rocks.com/es/tutorials/flexbox/quick/
+http://www.html5rocks.com/es/tutorials/workers/basics/
+https://developers.google.com/speed/articles/javascript-dom
