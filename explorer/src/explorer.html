@@ -24,7 +24,7 @@
                 <h1>HTML5 <a href="http://www.html5rocks.com/tutorials/file/filesystem/" target="_blank">Filesystem</a> Explorer</h1>
                 <div>
                     <span>
-                        <input type="checkbox" onclick="toggleLog()" id="toggle-log">
+                        <input type="checkbox" id="console">
                         <label for="toggle-log">Habilitar Log</label>
                     </span>
                     <span>Acciones: <a href="javascript:" data-accion="clear" onclick="clearFileSystem()" class="">Borrar FS</a> / <a href="javascript:" data-accion="list" onclick="listFileSystem(null)" class="active">Listar FS</a>
@@ -83,9 +83,15 @@
             </section>
 
             <section style="clear:both">
-                <div id="log" class="">
+                <div id="console" class="">
                     <button onclick="logger.clear()">Clear</button>
                     <div>filesystem:http://html5-demos.appspot.com/temporary/<p>Opened: http_html5-demos.appspot.com_0:Temporary</p></div>
+                </div>
+            </section>
+
+            <section>
+                <div id="file-info">
+
                 </div>
             </section>
 

@@ -544,9 +544,9 @@ img.download {
   box-shadow: 0 0 15px #222;
 }
 #file-info p {
-  display: inline-block;
+  /*display: inline-block;*/
   margin: 1em 0 0 0;
-  padding: 5em;
+  padding: 1em;
 }
 #file-info textarea {
   width: 400px;
@@ -577,6 +577,15 @@ img.download {
 header .active {
   text-decoration: underline;
 }
+
+#console{
+  display: none;
+}
+
+#console .show{
+  display: -webkit-box;
+}
+
 #log {
   font: 90% normal 'Courier New';
   position: absolute;

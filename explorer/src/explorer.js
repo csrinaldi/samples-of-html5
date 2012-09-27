@@ -1,4 +1,6 @@
 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
+
 var fs = null;
 window.path = "/";
 
@@ -28,6 +30,7 @@ function errorHandler(e) {
             msg = 'Unknown Error';
             break;
     };
+    alert(msg);
     document.querySelector('#explorer-error').innerHTML = 'Error: ' + msg;
 }
       
@@ -63,15 +66,22 @@ function loadFs(){
  **/
 
 function cd(path, op){
-    console.log(path);
-    /*if ( op == -1 ){
-        
+    if ( op == -1 ){
+        console.log(path);
+        //path = "/1/2/4";
+        var paths = path.split("/");
+        console.log(paths.length);
+        var auxPath = "";
+        for (var i=1; i<(paths.length-1); i++){
+            auxPath+="/"+paths[i];
+        } 
+        path = auxPath;
     }
     window.path = path;
     updateBarLocation(path);
-    fs.root.getDirectory(path, {
-        create:false
-    }, function(dir){
+
+    //TODO Ver error SECURITY_ERROR
+    /*window.resolveLocalFileSystemURL("filesystem:http:/"+path, function(fileEntry) {
         var dirReader = dir.createReader();
         var dirs = [];
         dirReader.readEntries(function(dirs){
@@ -79,10 +89,93 @@ function cd(path, op){
         }, errorHandler);
     }, errorHandler);*/
 
+    fs.root.getDirectory(path, {
+        create:false
+    }, function(dir){
+        console.log(dir.toURL());
+        var dirReader = dir.createReader();
+        var dirs = [];
+        dirReader.readEntries(function(dirs){
+            addNodeExplorer(dirs);
+        }, errorHandler);
+    }, errorHandler);
+
+}
+
+function imgViewer(fileEntry){
+    var img = document.createElement('img');
+    img.src = fileEntry.toURL();
+    return img;
+}
+
+function viewer(fileEntry){
+    var fileInfo = document.querySelector('[id="file-info"]');
+    
+    var childs = document.querySelector('[id="file-info"]').childNodes;
+    if ( childs.length > 0){
+        document.querySelector('[id="file-info"]').removeChild(childs[0]);
+    }
+
+    var fragment = document.createDocumentFragment();
+    var container = document.createElement('div');
+
+    var meta = document.createElement('div');
+    var metadata = fileEntry.getMetadata(function(e){
+        p1 = document.createElement('p');
+        p1.innerHTML = "<b>"+fileEntry.name+"</b>";
+        p2 = document.createElement('p');
+        p2.innerHTML = "Fecha de Modificación "+e.modificationTime;
+        meta.appendChild(p1);
+        meta.appendChild(p2);
+    }, errorHandler);
+    container.appendChild(meta)
+
+    fileEntry.file(function(file){
+
+        switch(file.type){
+           case 'text/html': 
+                htmlViewer(fileEntry, file, meta);
+            break;
+            case 'image/x-icon':
+            case 'image/svg+xml':
+            case 'image/png':
+            case 'image/jpeg':
+                meta.appendChild(imgViewer(fileEntry));
+            break;
+            case '': 
+            break;
+            default:
+        }
+
+        fragment.appendChild(container);
+        fileInfo.appendChild(fragment);
+        fileInfo.className = 'show';
+    });
+
 }
 
 function view(path){
+    fs.root.getFile(path, {}, function(fileEntry) {
+        
+        viewer(fileEntry);
+        
 
+        //fileEntry.file(function(file) {
+
+            
+
+            /*var reader = new FileReader();
+
+            reader.onloadend = function(e) {
+                var txtArea = document.createElement('textarea');
+                txtArea.value = this.result;
+                document.body.appendChild(txtArea);
+            };*/
+
+            //reader.readAsText(file);
+        //}, errorHandler);
+
+  }, errorHandler);
 }
 
 function mv(path){
@@ -172,10 +265,12 @@ function addNodeExplorer(entries){
         if ( entry.isFile ){
             img.src = "img/mimetypes/text-plain.png";
             img.width = 32;
+            li.addEventListener("click", function(e){
+                view(this.getAttribute('data-path'), 0);
+            }, false);
         }else{
             li.addEventListener("click", function(e){
-                console.log(e);
-                cd(dataPath, 0);
+                cd(this.getAttribute('data-path'), 0);
             }, false);
             img.src = "img/folder.png";
             img.width = 32;
@@ -345,6 +440,17 @@ function listFileSystem(dir){
 function loadFile(){
     
 }
+
+/**
+* Habilita la consola para el filesystem
+**/
+function consoleFs(event){
+    if ( this.checked ){
+        this.className = "show";
+    }else{
+        this.className = "";
+    }
+}
       
 function initApp(){
     document.querySelector("#file_input").addEventListener('change', loadFile, false);
@@ -416,6 +522,11 @@ function initApp(){
     dropbox.addEventListener('dragend', dragEnd, false);
     
     document.querySelector("[id='upFsButton']").addEventListener("click", function(e){cd(window.path, -1)}, false);
+    document.querySelector("[id='console']").addEventListener("click", consoleFs, false);
+    
+    document.addEventListener("keyup", function(e){
+        document.querySelector('[id="file-info"]').className="";
+    }, false);
 
     //TODO revisar
     //gapi.plusone.render({"size":"medium", "annotation":"inline", "align":"left", "expandTo":"right"}, "plusone-div");
