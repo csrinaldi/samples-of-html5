@@ -192,6 +192,10 @@ li {
   -o-transform: scale(0.95);
 }
 
+#location{
+   width: 91%;
+}
+
 .fakebutton {
   text-align: center;
   line-height: 0;
@@ -201,7 +205,18 @@ li {
   width: 15px;
   height: 15px;
   display: inline-block;
-  background: url(../images/icons/sprite_black.png) -65px -23px no-repeat;
+ }
+
+.fakebutton > div[data-action= 'back']{
+    background: url(img/back.png) no-repeat;
+}
+
+.fakebutton > div[data-action='forward']{
+    background: url(img/next.png) no-repeat;
+}
+
+.fakebutton > div[data-action='refresh']{
+    background: url(img/sprite_black.png) -65px -23px no-repeat;
 }
 
 :-webkit-any(button, .fakebutton),

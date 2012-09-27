@@ -7,11 +7,14 @@ package com.logikas.gwt.localstorage.client;
 import com.google.gwt.core.client.EntryPoint;
 import elemental.client.Browser;
 import elemental.dom.Document;
-import elemental.dom.Element;
 import elemental.events.Event;
 import elemental.events.EventListener;
 import elemental.html.Console;
 import elemental.html.DOMFileSystem;
+import elemental.html.DirectoryReader;
+import elemental.html.EntriesCallback;
+import elemental.html.Entry;
+import elemental.html.EntryArray;
 import elemental.html.ErrorCallback;
 import elemental.html.FileError;
 import elemental.html.FileSystemCallback;
@@ -31,6 +34,39 @@ public class LocalStorage implements EntryPoint {
     Document doc;
     IDBDatabase db = null;
     DOMFileSystem fs = null;
+    
+    
+    private class CustomErrorCallback implements ErrorCallback{
+
+        @Override
+        public boolean onErrorCallback(FileError error) {
+            String msg = "";
+                switch (error.getCode()) {
+                    case FileError.QUOTA_EXCEEDED_ERR:
+                        msg += "QUOTA_EXCEEDED_ERR";
+                        break;
+                    case FileError.NOT_FOUND_ERR:
+                        msg += "NOT_FOUND_ERR";
+                        break;
+                    case FileError.SECURITY_ERR:
+                        msg += "SECURITY_ERR";
+                        break;
+                    case FileError.INVALID_MODIFICATION_ERR:
+                        msg += "INVALID_MODIFICATION_ERR";
+                        break;
+                    case FileError.INVALID_STATE_ERR:
+                        msg += "INVALID_STATE_ERR";
+                        break;
+                    default:
+                        msg += "Unknown Error";
+                        break;
+                }
+                console.log("Error open FileSystem: "+msg);
+                return false;
+        }
+    }
+    
+    CustomErrorCallback errorCallback = new CustomErrorCallback();
 
     public LocalStorage() {
         window = Browser.getWindow();
@@ -91,50 +127,31 @@ public class LocalStorage implements EntryPoint {
         }, false);
 
 
-        window.webkitRequestFileSystem(Window.PERSISTENT, 1024 * 1024, new FileSystemCallback() {
+        window.webkitRequestFileSystem(Window.TEMPORARY, 1024 * 1024, new FileSystemCallback() {
             @Override
             public boolean onFileSystemCallback(DOMFileSystem fileSystem) {
                 fs = fileSystem;
-                console.log("FileSystem Open");
+                loadFs();
                 return true;
             }
-        }, new ErrorCallback() {
-            @Override
-            public boolean onErrorCallback(FileError error) {
-                String msg = "";
-
-                switch (error.getCode()) {
-
-                    case FileError.QUOTA_EXCEEDED_ERR:
-                        msg += "QUOTA_EXCEEDED_ERR";
-                        break;
-                    case FileError.NOT_FOUND_ERR:
-                        msg += "NOT_FOUND_ERR";
-                        break;
-                    case FileError.SECURITY_ERR:
-                        msg += "SECURITY_ERR";
-                        break;
-                    case FileError.INVALID_MODIFICATION_ERR:
-                        msg += "INVALID_MODIFICATION_ERR";
-                        break;
-                    case FileError.INVALID_STATE_ERR:
-                        msg += "INVALID_STATE_ERR";
-                        break;
-                    default:
-                        msg += "Unknown Error";
-                        break;
-                }
-                
-                console.log("Error open FileSystem: "+msg);
-
-                return false;
-            }
-        });
+        }, errorCallback );
 
 
     }
 
-    void handleSuccessOpenRequest(Event event) {
-        //db = event.getTarget();
+    public void loadFs(){
+        DirectoryReader reader = fs.getRoot().createReader();
+        reader.readEntries(new EntriesCallback() {
+            @Override
+            public boolean onEntriesCallback(EntryArray entries) {
+                for (int i = 0; i < entries.getLength(); i++) {
+                    Entry e = entries.item(i);
+                    
+                }
+                
+                return true;
+                
+            }
+        }, errorCallback); 
     }
 }

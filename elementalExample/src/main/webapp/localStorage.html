@@ -6,46 +6,119 @@
 <!-- differences in layout.                        -->
 
 <html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
-    <!--                                                               -->
-    <!-- Consider inlining CSS to reduce the number of requested files -->
-    <!--                                                               -->
-    <link type="text/css" rel="stylesheet" href="localStorage.css">
+        <!--                                                               -->
+        <!-- Consider inlining CSS to reduce the number of requested files -->
+        <!--                                                               -->
+        <link type="text/css" rel="stylesheet" href="localStorage.css">
+
+        <!--                                           -->
+        <!-- Any title is fine                         -->
+        <!--                                           -->
+        <title>LocalStorage with Elemental</title>
+
+        <!--                                           -->
+        <!-- This script loads your compiled module.   -->
+        <!-- If you add any GWT meta tags, they must   -->
+        <!-- be added before this line.                -->
+        <!--                                           -->
+        <script type="text/javascript" language="javascript" src="localstorage/localstorage.nocache.js"></script>
+    </head>
 
     <!--                                           -->
-    <!-- Any title is fine                         -->
+    <!-- The body can have arbitrary html, or      -->
+    <!-- you can leave the body empty if you want  -->
+    <!-- to create a completely dynamic UI.        -->
     <!--                                           -->
-    <title>LocalStorage with Elemental</title>
+    <body>
 
-    <!--                                           -->
-    <!-- This script loads your compiled module.   -->
-    <!-- If you add any GWT meta tags, they must   -->
-    <!-- be added before this line.                -->
-    <!--                                           -->
-    <script type="text/javascript" language="javascript" src="localstorage/localstorage.nocache.js"></script>
-  </head>
+        <!-- OPTIONAL: include this if you want history support -->
+        <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
 
-  <!--                                           -->
-  <!-- The body can have arbitrary html, or      -->
-  <!-- you can leave the body empty if you want  -->
-  <!-- to create a completely dynamic UI.        -->
-  <!--                                           -->
-  <body>
+        <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+        <noscript>
+        <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+            Your web browser must have JavaScript enabled
+            in order for this application to display correctly.
+        </div>
+        </noscript>
 
-    <!-- OPTIONAL: include this if you want history support -->
-    <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
+        <div id="container">
+            <header>
+                <img src="img/favicon.png" alt="HTML5 Filesystem Explorer" title="HTML5 Filesystem Explorer">
+                <h1>HTML5 <a href="http://www.html5rocks.com/tutorials/file/filesystem/" target="_blank">Filesystem</a> Explorer</h1>
+                <div>
+                    <span>
+                        <input type="checkbox" onclick="toggleLog()" id="toggle-log">
+                        <label for="toggle-log">Habilitar Log</label>
+                    </span>
+                    <span>Acciones: <a href="javascript:" data-accion="clear" onclick="clearFileSystem()" class="">Borrar FS</a> / <a href="javascript:" data-accion="list" onclick="listFileSystem(null)" class="active">Listar FS</a>
+                    </span>
+                    <span>
+                        <input type="file" id="file_input" class="button" webkitdirectory="" mozdirectory="" directory="" alt="Importar Directorio" title="Importar Directorio">
+                    </span>
+                    <span>
+                        <input type="text" id="entry-name" placeholder="nuevo.txt / directorio">
+                        <select id="entry-type" title="Seleccione para crear un nuevo Archivo o Directorio">
+                            <option value="dir">Directorio</option>
+                            <option value="file">Archivo</option>
+                        </select>
+                        <button id="createButton" onclick="createNewEntry()" title="Crea un nuevo Archivo o Directorio">Crear</button>
+                    </span>
+                </div>
+            </header>
 
-    <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
-    <noscript>
-      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
-        Your web browser must have JavaScript enabled
-        in order for this application to display correctly.
-      </div>
-    </noscript>
-    
-    <input id="files" type="file" multiple />
-    
-  </body>
+
+            <section>
+                <div style="display:-webkit-flex:100%;margin: 25px 0 15px 0;">
+                    <div style="-webkit-flex: 1 0 55%;">
+                        <button id="backFsButton" onclick="backFolder()" alt="Refresh view" title="Refresh view" class="fakebutton">
+                            <div></div>
+                        </button>
+                        <button id="forwarFsButton" onclick="forwardFolder()" alt="Refresh view" title="Refresh view" class="fakebutton">
+                            <div></div>
+                        </button>
+                        <input type="text" id="location" disabled="" alt="Current directory path" title="Current directory path">
+                        <button id="openFsButton" onclick="refreshFolder()" alt="Refresh view" title="Refresh view" class="fakebutton">
+                            <div></div>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <div id="bar">
+                        <div id="nav-browser">
+                            <ul>
+                                <li rel="folder_fs" id="root_fs">
+                                    <a href="#" >Root FileSystem</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="explorer-container">
+                        <div id="explorer" draggable="true">
+                            <div style="width:100%; height:100%">
+                                <!--div id="explorer-error"></div-->
+                                <!--div id="drop-zone" draggable="true">Arrastra archivos aquí</div-->
+                                <div id="explorer-nav"></div>
+                                <!--div id="explorer-view"></div-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section style="clear:both">
+                <div id="log" class="">
+                    <button onclick="logger.clear()">Clear</button>
+                    <div>filesystem:http://html5-demos.appspot.com/temporary/<p>Opened: http_html5-demos.appspot.com_0:Temporary</p></div>
+                </div>
+            </section>
+
+            <footer></footer>
+
+        </div>
+
+    </body>
 </html>
