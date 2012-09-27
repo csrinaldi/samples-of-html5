@@ -8,6 +8,9 @@
         <!--script src="../libs/jstree1.0/_lib/jquery.cookie.js"></script>
         <script src="../libs/jstree1.0/_lib/jquery.hotkeys.js"></script-->
         <script src="../libs/jstree1.0/dist/jstree.js"></script>
+        <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
+            {"parsetags": "explicit"}
+        </script>
         <script src="explorer.js"></script>
 
 
@@ -44,12 +47,12 @@
             <section>
                 <div style="display:-webkit-flex;margin: 25px 0 15px 0;">
                     <div style="-webkit-flex: 1 1 85%;">
-                        <button id="backFsButton" onclick="backFolder()" alt="Refresh view" title="Refresh view" class="fakebutton">
-                            <div data-action="back"></div>
+                        <button id="upFsButton" alt="Refresh view" title="Up" class="fakebutton">
+                            <div data-action="up"></div>
                         </button>
-                        <button id="forwarFsButton" onclick="forwardFolder()" alt="Refresh view" title="Refresh view" class="fakebutton">
+                        <!--button id="forwarFsButton" onclick="forwardFolder()" alt="Refresh view" title="Refresh view" class="fakebutton">
                             <div data-action="forward"></div>
-                        </button>
+                        </button-->
                         <input type="text" id="location" disabled="" alt="Current directory path" title="Current directory path">
                         <button id="openFsButton" onclick="refreshFolder()" alt="Refresh view" title="Refresh view" class="fakebutton">
                             <div data-action="refresh"></div>
@@ -86,10 +89,22 @@
                 </div>
             </section>
 
-            <footer></footer>
+            <footer>
+                <div>
+                    <div id="plusone-div"></div>
+                    <span>
+                        <a href="www.logikas.com">www.logikas.com</a>
+                    </span>
+                    <span>
+                        <a href="https://sites.google.com/site/gabineteutn/">ADTG - UTN - FRSF</a>
+                    </span>
+                    <span>
+                        <a href="https://plus.google.com/u/0/108221888675664107719/posts">+Cristian Rinaldi</a>
+                    </span>
+                </div>
+            </footer>
 
         </div>
-
 
     </body>
 </html>

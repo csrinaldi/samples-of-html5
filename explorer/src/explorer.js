@@ -1,6 +1,8 @@
 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 var fs = null;
-window.path = "";
+window.path = "/";
+
+//TODO ver de hacer un historial del filesystem
 window.mapPath = new Array();
 window.mapPath[0] = "/";
       
@@ -41,6 +43,9 @@ function initFS() {
 * Genera el arbol de directorios y la vista en el explorador
 **/
 function loadFs(){
+    console.log("fs");
+    console.log(fs);
+
     var dirReader = fs.root.createReader();
     var dirs = [];
     dirReader.readEntries(function(dirs){
@@ -58,8 +63,8 @@ function loadFs(){
  **/
 
 function cd(path, op){
-    console.log(op);
-    if ( op == -1 ){
+    console.log(path);
+    /*if ( op == -1 ){
         
     }
     window.path = path;
@@ -72,7 +77,7 @@ function cd(path, op){
         dirReader.readEntries(function(dirs){
             addNodeExplorer(dirs);
         }, errorHandler);
-    }, errorHandler);
+    }, errorHandler);*/
 
 }
 
@@ -92,6 +97,10 @@ function refresh(path){
 
 }
       
+/**
+* Actualiza la barra de navegacion con el path del directorio
+* @param path Path del directorio
+**/
 function updateBarLocation(path){
     document.querySelector('[id="location"]').setAttribute("placeholder", "filesystem:/"+path);
 }
@@ -149,6 +158,7 @@ function addNodeExplorer(entries){
         dataPath = dataPath.replace("//", "///");
         li = document.createElement('li');
         li.setAttribute("id", dataPath);
+        li.setAttribute("data-path", dataPath);
         img = document.createElement('img');
         img.className = "folder";
         div = document.createElement('div');
@@ -164,7 +174,8 @@ function addNodeExplorer(entries){
             img.width = 32;
         }else{
             li.addEventListener("click", function(e){
-                cd(entry.fullPath);
+                console.log(e);
+                cd(dataPath, 0);
             }, false);
             img.src = "img/folder.png";
             img.width = 32;
@@ -177,8 +188,8 @@ function addNodeExplorer(entries){
 }
 
 /**
-             * TODO Ver el tema de los iconos en el jsTree
-             **/
+* TODO: Ver el tema de los iconos en el jsTree
+**/
 function addNode(entries, element){
     var length = entries.length;
     for (var i = 0; i < length; i++) {
@@ -393,7 +404,7 @@ function initApp(){
         console.log("Loaded ...");
     }).bind("move_node.jstree", function (e, data) {
         //TODO MOVE File and Directories
-        });
+    });
     
     var dropbox = document.querySelector("[id='explorer']");
     // init event handlers
@@ -404,7 +415,10 @@ function initApp(){
     dropbox.addEventListener("drop", drop, false);
     dropbox.addEventListener('dragend', dragEnd, false);
     
-    document.querySelector("[id='backFsButton']").addEventListener("click", cd(path, -1), useCapture)
+    document.querySelector("[id='upFsButton']").addEventListener("click", function(e){cd(window.path, -1)}, false);
+
+    //TODO revisar
+    //gapi.plusone.render({"size":"medium", "annotation":"inline", "align":"left", "expandTo":"right"}, "plusone-div");
     
 
     initFS();
