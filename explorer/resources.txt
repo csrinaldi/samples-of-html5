@@ -5,3 +5,10 @@ http://www.html5rocks.com/en/tutorials/file/filesystem/
 http://www.html5rocks.com/es/tutorials/flexbox/quick/
 http://www.html5rocks.com/es/tutorials/workers/basics/
 https://developers.google.com/speed/articles/javascript-dom
+http://my.safaribooksonline.com/book/web-development/html/9781449311384/working-with-files/i_section4_d1e852#fileinputduplicatingfiles
+https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications
+http://stackoverflow.com/questions/11477412/html5-drag-and-drop-items-webkitgetasentry-method-doesnt-exist
+http://www.html5rocks.com/en/tutorials/streaming/screenshare/
+http://www.adobe.com/devnet/html5/articles/real-world-example-html5-filesystem-api.html
+https://developers.google.com/chrome/whitepapers/storage?hl=es-419#query
+https://developer.mozilla.org/en-US/docs/DOM/File_APIs/Filesystem/Basic_Concepts_About_the_Filesystem_API#storage

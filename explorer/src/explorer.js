@@ -3,12 +3,17 @@ window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.we
 
 var fs = null;
 window.path = "/";
+window.directoryEntry = null;
 
 //TODO ver de hacer un historial del filesystem
 window.mapPath = new Array();
 window.mapPath[0] = "/";
-      
+     
+/**
+* Maneja los error en las operaciones de FileSystem
+**/ 
 function errorHandler(e) {
+    console.log(e);
     var msg = '';
     switch (e.code) {
         case FileError.QUOTA_EXCEEDED_ERR:
@@ -34,11 +39,20 @@ function errorHandler(e) {
     document.querySelector('#explorer-error').innerHTML = 'Error: ' + msg;
 }
       
+/**
+* Inicializa el FileSystem
+**/
 function initFS() {
-    window.requestFileSystem(window.TEMPORARY, 5*1024*1024, function(filesystem) {
+    window.webkitStorageInfo.requestQuota(PERSISTENT, 5*1024*1024, function(grantedBytes) {
+        window.requestFileSystem(PERSISTENT, grantedBytes, function(filesystem){
+            fs = filesystem;
+            loadFs();
+        }, errorHandler);
+    }, errorHandler);
+    /*window.requestFileSystem(window.TEMPORARY, 5*1024*1024, function(filesystem) {
         fs = filesystem;
         loadFs();
-    }, errorHandler);
+    }, errorHandler);*/
 }
             
 /**
@@ -46,15 +60,12 @@ function initFS() {
 * Genera el arbol de directorios y la vista en el explorador
 **/
 function loadFs(){
-    console.log("fs");
-    console.log(fs);
-
     var dirReader = fs.root.createReader();
     var dirs = [];
     dirReader.readEntries(function(dirs){
         addNode(dirs, $("#root_fs"));
         addNodeExplorer(dirs);
-        updateBarLocation("/");
+        updateBarLocation(fs.root.fullPath); // fs.root.fullPath == / 
     }); 
 }
 
@@ -103,6 +114,62 @@ function cd(path, op){
 }
 
 function imgViewer(fileEntry){
+
+    /*fs.root.getFile('/log.txt', {"create":true}, function(fileEntry){
+
+        fileEntry.createWriter(function(fileWriter) {
+
+            fileWriter.onwriteend = function(e) {
+                console.log('Write completed.');
+                console.log('Write completed.');
+
+                filesystem:http://localhost/persistent/explorer/src/img/next.png
+
+                window.resolveLocalFileSystemURL("filesystem:http://localhost/persistent/explorer/src/explorer.html", function(fE) {
+                    fE.file(function(file) {
+                        console.log("que pasa");
+
+                        var reader = new FileReader();
+
+                        reader.onloadstart = function(e) {
+                            console.log("onloadstart");
+                        }
+
+                        reader.onloadend = function(e) {
+                            console.log("onloadend");
+                            console.log(this.result);
+                            console.log("onloadend");
+                        };
+                        reader.readAsText(file);
+                    }, errorHandler);
+                }, errorHandler);
+            };
+
+            fileWriter.onerror = function(e) {
+                console.log('Write failed: ' + e.toString());
+            };
+
+            // Create a new Blob and write it to log.txt.
+            var bb = new window.WebKitBlobBuilder(); // Note: window.WebKitBlobBuilder in Chrome 12.
+            bb.append('Lorem Ipsum');
+            fileWriter.write(bb.getBlob('text/plain'));
+
+            
+
+
+        }, errorHandler);
+
+
+
+    }, errorHandler );*/
+
+    
+
+
+
+
+
+
     var img = document.createElement('img');
     img.src = fileEntry.toURL();
     return img;
@@ -198,7 +265,9 @@ function updateBarLocation(path){
     document.querySelector('[id="location"]').setAttribute("placeholder", "filesystem:/"+path);
 }
           
-
+/**
+* Gestiona la acción de drop (soltado del archivo o directorio)
+**/
 function drop(e){
     if (e.stopPropagation) {
         e.stopPropagation(); // stops the browser from redirecting.
@@ -210,14 +279,31 @@ function drop(e){
 
     var length = e.dataTransfer.items.length;
     var entries = new Array();
-                
-    for (var i = 0; i < length; i++) {
-        entries[i] = e.dataTransfer.items[i].webkitGetAsEntry();
-    }
-    createStructureFs(entries, path);
+    var files = new Array();
 
-    addNode(entries, $("#root_fs"));
+    function(dataTransfer){
+        window.resolveLocalFileSystemURL(fs.root.toURL()+window.path, function(rootEntry) {
+            for (var i = 0; i < length; i++) {
 
+                //entries[i] = e.dataTransfer.items[i].webkitGetAsEntry();
+                entry = dataTransfer.items[i].webkitGetAsEntry();
+                if (entry.isDirectory) {
+                    entry.copyTo(rootEntry, null, function(copiedEntry) {
+                        console.log("Directory Entry "+copiedEntry.name+" load Success!!");      
+                    }, errorHandler);
+                }else{
+                    entry.copyTo(rootEntry, null, function(copiedEntry) {
+                        console.log("File Entry "+copiedEntry.name+" load Success!!");      
+                    }, errorHandler);
+                }
+            }
+
+            //Deprecated
+            //createStructureFs(entries, path);
+
+            addNode(entries, $("#root_fs"));
+        }, errorHandler);
+    }(e.dataTransfer);
     return false;
 }
             
@@ -302,10 +388,9 @@ function addNode(entries, element){
                     "data-path" : entry.fullPath
                 }
             }, "inside", function(e){
-                console.log(entry);
+                //TODO agregado del nodo al arbol
             });
         }else{
-            console.log(entry);
             $.jstree._reference('#nav-browser').create_node(element, {
                 "type" : "folder", 
                 "title" : entry.name, 
@@ -322,13 +407,12 @@ function addNode(entries, element){
             });
         }
     }
-
 }
 
 /**
-             * Crea la estructura de directorios a partir de las entradas que existen en 
-             * entries
-             **/
+* Crea la estructura de directorios a partir de las entradas que existen en 
+* entries
+**/
 function createStructureFs(entries, pathRoot){
     var length = entries.length;
     for (var i = 0; i < length; i++) {
@@ -337,8 +421,9 @@ function createStructureFs(entries, pathRoot){
         if (entry.isFile) {
             fs.root.getFile(entry.fullPath, {
                 create:true
-            }, function(e){
-                console.log(entry.name + "created");
+            }, function(fileEntry){
+                console.log(fileEntry);
+                //TODO ver que hacer, interactuar con la DB
             },errorHandler);
         } else if (entry.isDirectory) {
             fs.root.getDirectory(entry.fullPath, {
@@ -348,9 +433,7 @@ function createStructureFs(entries, pathRoot){
                 var dirs = [];
                 dirReader.readEntries(function(dirs){
                     createStructureFs(dirs, null);
-                }, function(e){
-                    console.log(e)
-                });
+                }, errorHandler);
             }, errorHandler);
         }
     }
