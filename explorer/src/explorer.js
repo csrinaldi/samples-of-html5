@@ -5,10 +5,10 @@ var fs = null;
 window.path = "/";
 window.actualDirectory = null;
 
-//TODO ver de hacer un historial del filesystem
-window.mapPath = new Array();
-window.mapPath[0] = "/";
-     
+var fileSystemPath = "filesystem:file:///persistent";
+//var fileSystemPath = "filesystem:http://samples-of-html5.appspot.com";
+
+
 /**
 * Maneja los error en las operaciones de FileSystem
 **/ 
@@ -157,7 +157,7 @@ function cd(path, op){
     }
     window.path = path;
 
-    window.resolveLocalFileSystemURL("filesystem:file:///persistent"+path, function(fileEntry) {
+    window.resolveLocalFileSystemURL(fileSystemPath+path, function(fileEntry) {
         actualDirectory = fileEntry;
         updateBarLocation(fileEntry.fullPath);
         var dirReader = fileEntry.createReader();
@@ -178,7 +178,7 @@ function mv(path){
 }
 
 function update(entry){
-    window.resolveLocalFileSystemURL("filesystem:file:///persistent"+window.path, function(entry){
+    window.resolveLocalFileSystemURL(fileSystemPath+window.path, function(entry){
         var dirReader = entry.createReader();
         var dirs = [];
         dirReader.readEntries(function(dirs){
@@ -191,7 +191,7 @@ function update(entry){
 * Remueve directorios y archivos por el path pasado como paramtro.
 **/
 function rm(path){
-    window.resolveLocalFileSystemURL("filesystem:file:///persistent"+path, function(entry){
+    window.resolveLocalFileSystemURL(fileSystemPath+path, function(entry){
         if (entry.isDirectory )
             entry.removeRecursively(function(){
                 update();
@@ -213,7 +213,7 @@ function refresh(path){
 * @param name nombre del directorio
 **/
 function mkdir(name){
-    window.resolveLocalFileSystemURL("filesystem:file:///persistent"+window.path, function(entry){
+    window.resolveLocalFileSystemURL(fileSystemPath+window.path, function(entry){
         entry.getDirectory(name, {
             create:true
         }, function(e){
@@ -222,6 +222,14 @@ function mkdir(name){
             dirReader.readEntries(function(dirs){
                 addNodeExplorer(dirs);
             }, errorHandler);
+        }, errorHandler);
+    }, errorHandler);
+}
+
+function newFile(name){
+    window.resolveLocalFileSystemURL(fileSystemPath+window.path, function(entry){
+        entry.getFile(name, {create: true}, function(fileEntry) {
+            update(entry);
         }, errorHandler);
     }, errorHandler);
 }
@@ -269,16 +277,17 @@ function drop(e){
         entries[i] = entry;
         if (entry.isDirectory) {
             entry.copyTo(actualDirectory, null, function(copiedEntry) {
-                console.log("Directory Entry "+copiedEntry.name+" load Success!!");      
+               //update() 
             }, errorHandler);
         }else{
             entry.copyTo(actualDirectory, null, function(copiedEntry) {
-                console.log("File Entry "+copiedEntry.name+" load Success!!");      
+               //update()
             }, errorHandler);
         }
     }
 
     addNode(entries, $("#root_fs"));
+    
 
     //Deprecated
     //createStructureFs(entries, path);
