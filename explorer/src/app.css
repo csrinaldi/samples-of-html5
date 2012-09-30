@@ -564,7 +564,7 @@ img.download {
   margin: 1em 0 0 0;
   padding: 1em;
 }
-#file-info textarea,  #file-info img, #file-info iframe{
+#file-info textarea,  #file-info img, #file-info iframe, #file-info canvas, #file-info audio, #file-info video{
   border-radius: 5px;
   box-shadow: 0 0 15px #222;
   padding: 10px;

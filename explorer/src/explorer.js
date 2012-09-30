@@ -6,8 +6,20 @@ window.path = "/";
 window.actualDirectory = null;
 
 var fileSystemPath = "filesystem:file:///persistent";
-//var fileSystemPath = "filesystem:http://samples-of-html5.appspot.com";
+//var fileSystemPath = "filesystem:http://samples-of-html5.appspot.com/persistent";
 
+
+var analyser = null;
+var source;
+var audioContext;
+var CANVAS_WIDTH = 400;
+var CANVAS_HEIGHT = 300;
+var canvas = null;
+var ctx = null;
+// We'll need the offset later
+OFFSET = 100;
+// Spacing between the individual bars
+SPACING = 10;
 
 /**
 * Maneja los error en las operaciones de FileSystem
@@ -71,6 +83,46 @@ function loadFs(){
 }
 
 
+
+function draw() {
+  // See http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+  window.requestAnimFrame(draw, canvas);
+  // New typed array for the raw frequency data
+
+  var freqData = new Uint8Array(analyser.frequencyBinCount);
+  // Put the raw frequency into the newly created array
+  analyser.getByteFrequencyData(freqData);
+
+  //console.log(freqData);
+
+  // Clear the canvas
+  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  // This loop draws all the bars
+  for (var i = 0; i < freqData.length - OFFSET; i++) {
+    // Work out the hight of the current bar
+    // by getting the current frequency
+    var magnitude = freqData[i + OFFSET];
+    console.log(magnitude);
+    r = 200 + i;
+    g = 100 + i;
+    b = 50 + i;
+    ctx.fillStyle = "rgba("+r+", "+g+", "+b+", 0.5)";
+    // Draw a bar from the bottom up (cause for the "-magnitude")
+    ctx.fillRect(i * SPACING, CANVAS_HEIGHT, SPACING / 2, -magnitude);
+  };
+}
+
+window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(callback, element){
+                window.setTimeout(callback, 1000/60);
+              };
+})();
+
 function viewer(fileEntry){
     var fileInfo = document.querySelector('[id="file-info"]');
     
@@ -117,6 +169,50 @@ function viewer(fileEntry){
                 img.src = fileEntry.toURL();
                 meta.appendChild(img);
             break;
+            case 'audio/mp3':
+                try {
+                    var audio = new Audio();
+                    audio.src = fileEntry.toURL();
+                    audio.controls = true;
+                    audio.autoplay = true;
+                    audio.addEventListener("canplaythrough", function(e){
+                        audioContext = new webkitAudioContext();
+                        analyser = audioContext.createAnalyser();
+                        source = audioContext.createMediaElementSource(audio);
+                        source.connect(analyser);
+                        analyser.connect(audioContext.destination);
+
+                        canvas = document.createElement( 'canvas' ); 
+                        canvas.width = CANVAS_WIDTH;
+                        canvas.height = CANVAS_HEIGHT;
+                        ctx = canvas.getContext( '2d' ); 
+
+                        meta.appendChild(canvas);
+                        draw();
+                    }, false);
+
+                    meta.appendChild(audio);
+
+                    //TODO si queremos leer el archivo directamente como ArrayBuffer WebAudio API
+                    //var reader = new FileReader();
+                    //reader.onloadend = function(e){
+                        /*var arrayBuffer = e.target.result;
+                        context.decodeAudioData(arrayBuffer, function(buffer){
+                            var source = context.createBufferSource();
+                            source.buffer = buffer;
+                            source.connect(context.destination);
+                            source.noteOn(0);
+                        });*/
+                    //}
+
+                    //reader.readAsArrayBuffer(file);
+                    
+                }
+                catch(e) {
+                    console.log(e);
+                    alert('Web Audio API is not supported in this browser');
+                }
+                break;
             default:
                 var iframe = document.createElement('iframe');
                 iframe.src = fileEntry.toURL();
@@ -213,15 +309,13 @@ function refresh(path){
 * @param name nombre del directorio
 **/
 function mkdir(name){
+    console.log(name);
     window.resolveLocalFileSystemURL(fileSystemPath+window.path, function(entry){
+        console.log(entry);
         entry.getDirectory(name, {
             create:true
         }, function(e){
-            var dirReader = entry.createReader();
-            var dirs = [];
-            dirReader.readEntries(function(dirs){
-                addNodeExplorer(dirs);
-            }, errorHandler);
+            update(entry);
         }, errorHandler);
     }, errorHandler);
 }
@@ -229,7 +323,39 @@ function mkdir(name){
 function newFile(name){
     window.resolveLocalFileSystemURL(fileSystemPath+window.path, function(entry){
         entry.getFile(name, {create: true}, function(fileEntry) {
-            update(entry);
+            fileEntry.createWriter(function(fileWriter) {
+
+                fileWriter.onwriteend = function(e) {
+                    console.log('El archivo fue escrito correctamente.');
+                };
+
+                fileWriter.onerror = function(e) {
+                    errorHandler(e);
+                };
+
+                // Create a new Blob and write it to log.txt.
+                var blob = new Blob(['Este contenido fue escrito por el Explorar del FileSystem HTML5!!!'], {type: 'text/plain'});
+
+                fileWriter.write(blob);
+            
+                update(entry);
+            }, errorHandler);
+        }, errorHandler);
+    });
+}
+
+function append(path){
+     window.resolveLocalFileSystemURL(fileSystemPath+window.path, function(fileEntry){
+        console.log(fileEntry);
+        fileEntry.createWriter(function(fileWriter) {
+
+            fileWriter.seek(fileWriter.length); // Start write position at EOF.
+
+            // Create a new Blob and write it to log.txt.
+            var blob = new Blob(['Esta info fue agregada!!!!'], {type: 'text/plain'});
+
+            fileWriter.write(blob);
+
         }, errorHandler);
     }, errorHandler);
 }
@@ -244,6 +370,7 @@ function create(type, name){
             newFile(name);
             break;
         default:
+            console.log(type);
     }
 }
       
@@ -252,7 +379,7 @@ function create(type, name){
 * @param path Path del directorio
 **/
 function updateBarLocation(path){
-    document.querySelector('[id="location"]').setAttribute("placeholder", "filesystem:/"+path);
+    document.querySelector('[id="location"]').setAttribute("placeholder", fileSystemPath+path);
 }
           
 /**
@@ -274,6 +401,7 @@ function drop(e){
     
     for (var i = 0; i < length; i++) {
         entry = e.dataTransfer.items[i].webkitGetAsEntry();
+        console.log(entry.toURL());
         entries[i] = entry;
         if (entry.isDirectory) {
             entry.copyTo(actualDirectory, null, function(copiedEntry) {
@@ -338,7 +466,6 @@ function addNodeExplorer(entries){
 
         //Acciones sobre los archivos y directorios
         delAction = document.createElement('a');
-        delAction.setAttribute()
         delAction.addEventListener("click", function(e){
             rm(this.getAttribute('data-remove-link'));
             e.stopPropagation();
@@ -350,12 +477,23 @@ function addNodeExplorer(entries){
         delAction.appendChild(delImg);
 
         saveAction = document.createElement('a');
-        saveAction.href = "filesystem:file:///persistent"+entry.fullPath;
+        saveAction.href = fileSystemPath+entry.fullPath;
         saveAction.setAttribute('download', entry.name);
         saveImg = document.createElement("img");
         saveImg.src = "img/download.png";
         saveImg.className = "icon";
         saveAction.appendChild(saveImg);
+
+        appendAction = document.createElement('a');
+        appendAction.setAttribute('data-append-link', dataPath);
+        appendImg = document.createElement("img");
+        appendImg.src = "img/append.png";
+        appendImg.className = "icon";
+        appendAction.appendChild(appendImg);
+        appendAction.addEventListener("click", function(e){
+            append(this.getAttribute('data-append-link'));
+            e.stopPropagation();
+        }, false);
 
         if ( entry.isFile ){
             img.src = "img/mimetypes/text-plain.png";
@@ -365,6 +503,20 @@ function addNodeExplorer(entries){
             }, false);
             li.appendChild(saveAction);
             li.appendChild(delAction);
+            entry.file(function(file){
+                console.log(file.type);
+                /*(function (root, element, file){
+                    switch(file.type){
+                        case 'text/html': 
+                        case 'application/x-javascript':
+                        case 'text/plain':
+                            root.appendChild(element);
+                            break;
+                        default:
+                            break;
+                    }
+                })(li, appendAction, file)   */
+            });
 
         }else{
             li.addEventListener("click", function(e){
@@ -422,35 +574,6 @@ function addNode(entries, element){
     }
 }
 
-/**
-* Crea la estructura de directorios a partir de las entradas que existen en 
-* entries
-**/
-function createStructureFs(entries, pathRoot){
-    var length = entries.length;
-    for (var i = 0; i < length; i++) {
-        var entry = entries[i];
-          
-        if (entry.isFile) {
-            fs.root.getFile(entry.fullPath, {
-                create:true
-            }, function(fileEntry){
-                console.log(fileEntry);
-                //TODO ver que hacer, interactuar con la DB
-            },errorHandler);
-        } else if (entry.isDirectory) {
-            fs.root.getDirectory(entry.fullPath, {
-                create:true
-            }, function(e){
-                var dirReader = entry.createReader();
-                var dirs = [];
-                dirReader.readEntries(function(dirs){
-                    createStructureFs(dirs, null);
-                }, errorHandler);
-            }, errorHandler);
-        }
-    }
-}
 
 function dragOver(e){
     if (e.preventDefault) {
@@ -533,8 +656,11 @@ function listFileSystem(dir){
     }
 }
 
-function loadFile(){
+function loadDirectory(e){
     
+
+
+
 }
 
 /**
@@ -549,7 +675,7 @@ function consoleFs(event){
 }
       
 function initApp(){
-    document.querySelector("#file_input").addEventListener('change', loadFile, false);
+    document.querySelector("#file_input").addEventListener('change', loadDirectory, false);
 
     $("#nav-browser").jstree({ 
 
@@ -625,6 +751,7 @@ function initApp(){
     }, false);
 
     document.querySelector('[id="createButton"]').addEventListener("click", function(e){
+        console.log(e);
         create(document.querySelector('[id="entry-type"]').value, document.querySelector('[id="entry-name"]').value);
     });
 
