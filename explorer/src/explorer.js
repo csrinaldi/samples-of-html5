@@ -3,7 +3,7 @@ window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.we
 
 var fs = null;
 window.path = "/";
-window.directoryEntry = null;
+window.actualDirectory = null;
 
 //TODO ver de hacer un historial del filesystem
 window.mapPath = new Array();
@@ -43,9 +43,10 @@ function errorHandler(e) {
 * Inicializa el FileSystem
 **/
 function initFS() {
-    window.webkitStorageInfo.requestQuota(PERSISTENT, 5*1024*1024, function(grantedBytes) {
+    window.webkitStorageInfo.requestQuota(PERSISTENT, 10*1024*1024, function(grantedBytes) {
         window.requestFileSystem(PERSISTENT, grantedBytes, function(filesystem){
             fs = filesystem;
+            actualDirectory = fs.root;
             loadFs();
         }, errorHandler);
     }, errorHandler);
@@ -70,6 +71,72 @@ function loadFs(){
 }
 
 
+function viewer(fileEntry){
+    var fileInfo = document.querySelector('[id="file-info"]');
+    
+    var childs = document.querySelector('[id="file-info"]').childNodes;
+    if ( childs.length > 0){
+        document.querySelector('[id="file-info"]').removeChild(childs[0]);
+    }
+
+    var fragment = document.createDocumentFragment();
+
+    var container = document.createElement('div');
+    container.className = "viewer-container";
+
+    var meta = document.createElement('div');
+    meta.className = "metadata-container";
+    var metadata = fileEntry.getMetadata(function(e){
+        p1 = document.createElement('p');
+        p1.innerHTML = "<h1>"+fileEntry.name+"</h1><span>(<i>"+((e.size/1024)/1024) +" MB</i>)</span>";
+        p2 = document.createElement('p');
+        p2.innerHTML = "Fecha de Modificación "+e.modificationTime;
+        meta.appendChild(p1);
+        meta.appendChild(p2);
+    }, errorHandler);
+    container.appendChild(meta)
+
+    fileEntry.file(function(file){
+        switch(file.type){
+           case 'text/html': 
+           case 'application/x-javascript':
+           case 'text/plain':
+                var reader = new FileReader();
+                reader.onloadend = function(e) {
+                    var txtArea = document.createElement('textarea');
+                    txtArea.value = this.result;
+                    meta.appendChild(txtArea);
+                }
+                reader.readAsText(file);
+            break;
+            case 'image/x-icon':
+            case 'image/svg+xml':
+            case 'image/png':
+            case 'image/jpeg':
+                var img = document.createElement('img');
+                img.src = fileEntry.toURL();
+                meta.appendChild(img);
+            break;
+            default:
+                var iframe = document.createElement('iframe');
+                iframe.src = fileEntry.toURL();
+                meta.appendChild(iframe);
+        }
+
+        fragment.appendChild(container);
+        fileInfo.appendChild(fragment);
+        fileInfo.className = 'show';
+    });
+
+}
+
+function view(path){
+    fs.root.getFile(path, {}, function(fileEntry) {
+        viewer(fileEntry);
+  }, errorHandler);
+}
+
+
 /**
  * Realiza un CD (comando) al directorio indicado
  * @path ruta del directorio a realizar el cd
@@ -89,172 +156,87 @@ function cd(path, op){
         path = auxPath;
     }
     window.path = path;
-    updateBarLocation(path);
 
-    //TODO Ver error SECURITY_ERROR
-    /*window.resolveLocalFileSystemURL("filesystem:http:/"+path, function(fileEntry) {
-        var dirReader = dir.createReader();
-        var dirs = [];
-        dirReader.readEntries(function(dirs){
-            addNodeExplorer(dirs);
-        }, errorHandler);
-    }, errorHandler);*/
-
-    fs.root.getDirectory(path, {
-        create:false
-    }, function(dir){
-        console.log(dir.toURL());
-        var dirReader = dir.createReader();
+    window.resolveLocalFileSystemURL("filesystem:file:///persistent"+path, function(fileEntry) {
+        actualDirectory = fileEntry;
+        updateBarLocation(fileEntry.fullPath);
+        var dirReader = fileEntry.createReader();
         var dirs = [];
         dirReader.readEntries(function(dirs){
             addNodeExplorer(dirs);
         }, errorHandler);
     }, errorHandler);
-
 }
 
-function imgViewer(fileEntry){
 
-    /*fs.root.getFile('/log.txt', {"create":true}, function(fileEntry){
+function cp(origin, dest){
 
-        fileEntry.createWriter(function(fileWriter) {
-
-            fileWriter.onwriteend = function(e) {
-                console.log('Write completed.');
-                console.log('Write completed.');
-
-                filesystem:http://localhost/persistent/explorer/src/img/next.png
-
-                window.resolveLocalFileSystemURL("filesystem:http://localhost/persistent/explorer/src/explorer.html", function(fE) {
-                    fE.file(function(file) {
-                        console.log("que pasa");
-
-                        var reader = new FileReader();
-
-                        reader.onloadstart = function(e) {
-                            console.log("onloadstart");
-                        }
-
-                        reader.onloadend = function(e) {
-                            console.log("onloadend");
-                            console.log(this.result);
-                            console.log("onloadend");
-                        };
-                        reader.readAsText(file);
-                    }, errorHandler);
-                }, errorHandler);
-            };
-
-            fileWriter.onerror = function(e) {
-                console.log('Write failed: ' + e.toString());
-            };
-
-            // Create a new Blob and write it to log.txt.
-            var bb = new window.WebKitBlobBuilder(); // Note: window.WebKitBlobBuilder in Chrome 12.
-            bb.append('Lorem Ipsum');
-            fileWriter.write(bb.getBlob('text/plain'));
-
-            
-
-
-        }, errorHandler);
-
-
-
-    }, errorHandler );*/
-
-    
-
-
-
-
-
-
-    var img = document.createElement('img');
-    img.src = fileEntry.toURL();
-    return img;
-}
-
-function viewer(fileEntry){
-    var fileInfo = document.querySelector('[id="file-info"]');
-    
-    var childs = document.querySelector('[id="file-info"]').childNodes;
-    if ( childs.length > 0){
-        document.querySelector('[id="file-info"]').removeChild(childs[0]);
-    }
-
-    var fragment = document.createDocumentFragment();
-    var container = document.createElement('div');
-
-    var meta = document.createElement('div');
-    var metadata = fileEntry.getMetadata(function(e){
-        p1 = document.createElement('p');
-        p1.innerHTML = "<b>"+fileEntry.name+"</b>";
-        p2 = document.createElement('p');
-        p2.innerHTML = "Fecha de Modificación "+e.modificationTime;
-        meta.appendChild(p1);
-        meta.appendChild(p2);
-    }, errorHandler);
-    container.appendChild(meta)
-
-    fileEntry.file(function(file){
-
-        switch(file.type){
-           case 'text/html': 
-                htmlViewer(fileEntry, file, meta);
-            break;
-            case 'image/x-icon':
-            case 'image/svg+xml':
-            case 'image/png':
-            case 'image/jpeg':
-                meta.appendChild(imgViewer(fileEntry));
-            break;
-            case '': 
-            break;
-            default:
-        }
-
-        fragment.appendChild(container);
-        fileInfo.appendChild(fragment);
-        fileInfo.className = 'show';
-    });
-
-}
-
-function view(path){
-    fs.root.getFile(path, {}, function(fileEntry) {
-        
-        viewer(fileEntry);
-        
-
-        //fileEntry.file(function(file) {
-
-            
-
-            /*var reader = new FileReader();
-
-            reader.onloadend = function(e) {
-                var txtArea = document.createElement('textarea');
-                txtArea.value = this.result;
-                document.body.appendChild(txtArea);
-            };*/
-
-            //reader.readAsText(file);
-        //}, errorHandler);
-
-  }, errorHandler);
 }
 
 function mv(path){
 
 }
 
-function rm(path){
+function update(entry){
+    window.resolveLocalFileSystemURL("filesystem:file:///persistent"+window.path, function(entry){
+        var dirReader = entry.createReader();
+        var dirs = [];
+        dirReader.readEntries(function(dirs){
+            addNodeExplorer(dirs);
+        }, errorHandler);
+    });
+}
 
+/**
+* Remueve directorios y archivos por el path pasado como paramtro.
+**/
+function rm(path){
+    window.resolveLocalFileSystemURL("filesystem:file:///persistent"+path, function(entry){
+        if (entry.isDirectory )
+            entry.removeRecursively(function(){
+                update();
+            });
+        else
+            entry.remove(function(){
+                update();
+            }, errorHandler);
+    }, errorHandler);
 }
 
 function refresh(path){
 
+}
+
+/**
+* Crea un nuevo directotio con el nombre name, en la ruta actual de navegacion que se obtiene de
+* window.path
+* @param name nombre del directorio
+**/
+function mkdir(name){
+    window.resolveLocalFileSystemURL("filesystem:file:///persistent"+window.path, function(entry){
+        entry.getDirectory(name, {
+            create:true
+        }, function(e){
+            var dirReader = entry.createReader();
+            var dirs = [];
+            dirReader.readEntries(function(dirs){
+                addNodeExplorer(dirs);
+            }, errorHandler);
+        }, errorHandler);
+    }, errorHandler);
+}
+
+
+function create(type, name){
+    switch (type){
+        case 'dir': 
+            mkdir(name);
+            break;
+        case 'file':
+            newFile(name);
+            break;
+        default:
+    }
 }
       
 /**
@@ -281,29 +263,26 @@ function drop(e){
     var entries = new Array();
     var files = new Array();
 
-    function(dataTransfer){
-        window.resolveLocalFileSystemURL(fs.root.toURL()+window.path, function(rootEntry) {
-            for (var i = 0; i < length; i++) {
+    
+    for (var i = 0; i < length; i++) {
+        entry = e.dataTransfer.items[i].webkitGetAsEntry();
+        entries[i] = entry;
+        if (entry.isDirectory) {
+            entry.copyTo(actualDirectory, null, function(copiedEntry) {
+                console.log("Directory Entry "+copiedEntry.name+" load Success!!");      
+            }, errorHandler);
+        }else{
+            entry.copyTo(actualDirectory, null, function(copiedEntry) {
+                console.log("File Entry "+copiedEntry.name+" load Success!!");      
+            }, errorHandler);
+        }
+    }
 
-                //entries[i] = e.dataTransfer.items[i].webkitGetAsEntry();
-                entry = dataTransfer.items[i].webkitGetAsEntry();
-                if (entry.isDirectory) {
-                    entry.copyTo(rootEntry, null, function(copiedEntry) {
-                        console.log("Directory Entry "+copiedEntry.name+" load Success!!");      
-                    }, errorHandler);
-                }else{
-                    entry.copyTo(rootEntry, null, function(copiedEntry) {
-                        console.log("File Entry "+copiedEntry.name+" load Success!!");      
-                    }, errorHandler);
-                }
-            }
+    addNode(entries, $("#root_fs"));
 
-            //Deprecated
-            //createStructureFs(entries, path);
+    //Deprecated
+    //createStructureFs(entries, path);
 
-            addNode(entries, $("#root_fs"));
-        }, errorHandler);
-    }(e.dataTransfer);
     return false;
 }
             
@@ -347,19 +326,44 @@ function addNodeExplorer(entries){
         li.appendChild(div);
         a  = document.createElement('a');
         a.className = "folfer";
-                    
+
+        //Acciones sobre los archivos y directorios
+        delAction = document.createElement('a');
+        delAction.setAttribute()
+        delAction.addEventListener("click", function(e){
+            rm(this.getAttribute('data-remove-link'));
+            e.stopPropagation();
+        });
+        delAction.setAttribute('data-remove-link', dataPath);
+        delImg = document.createElement("img");
+        delImg.src = "img/trash.png";
+        delImg.className = "icon";
+        delAction.appendChild(delImg);
+
+        saveAction = document.createElement('a');
+        saveAction.href = "filesystem:file:///persistent"+entry.fullPath;
+        saveAction.setAttribute('download', entry.name);
+        saveImg = document.createElement("img");
+        saveImg.src = "img/download.png";
+        saveImg.className = "icon";
+        saveAction.appendChild(saveImg);
+
         if ( entry.isFile ){
             img.src = "img/mimetypes/text-plain.png";
             img.width = 32;
             li.addEventListener("click", function(e){
                 view(this.getAttribute('data-path'), 0);
             }, false);
+            li.appendChild(saveAction);
+            li.appendChild(delAction);
+
         }else{
             li.addEventListener("click", function(e){
                 cd(this.getAttribute('data-path'), 0);
             }, false);
             img.src = "img/folder.png";
             img.width = 32;
+            li.appendChild(delAction);
         }
                     
         ul.appendChild(li);
@@ -610,6 +614,10 @@ function initApp(){
     document.addEventListener("keyup", function(e){
         document.querySelector('[id="file-info"]').className="";
     }, false);
+
+    document.querySelector('[id="createButton"]').addEventListener("click", function(e){
+        create(document.querySelector('[id="entry-type"]').value, document.querySelector('[id="entry-name"]').value);
+    });
 
     //TODO revisar
     //gapi.plusone.render({"size":"medium", "annotation":"inline", "align":"left", "expandTo":"right"}, "plusone-div");

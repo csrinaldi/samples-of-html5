@@ -511,6 +511,7 @@ img.download {
   width: auto;
 }
 #file-info {
+
   position: absolute;
   top: 0;
   left: 0;
@@ -536,7 +537,22 @@ img.download {
   -o-box-orient: vertical;
   -o-box-pack: center;
 }
-#file-info > div,
+
+#file-info .viewer-container{
+  margin-left: 20%;
+  width: 60%;
+  border-radius: 5px;
+  box-shadow: 0 0 15px #222;
+  padding: 10px;
+  background: #fff;
+  margin-bottom: 2em;
+}
+
+#file-info .metadata-container{
+  margin-bottom: 10px;
+}
+
+/*#file-info > div,*/
 #file-info p {
   padding: 10px;
   background: #fff;
@@ -548,19 +564,15 @@ img.download {
   margin: 1em 0 0 0;
   padding: 1em;
 }
-#file-info textarea {
-  width: 400px;
-  height: 100px;
-}
-#file-info img {
-  max-height: 350px;
+#file-info textarea,  #file-info img, #file-info iframe{
   border-radius: 5px;
   box-shadow: 0 0 15px #222;
+  padding: 10px;
+  margin-top: 20px;
+  width: 400px;
+  height: 400px;
 }
-#file-info iframe {
-  width: 500px;
-  height: 300px;
-}
+
 #errors:not(:empty) {
   margin: 15px 0 -15px 0;
   text-align: center;
