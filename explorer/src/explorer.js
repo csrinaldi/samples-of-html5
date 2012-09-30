@@ -5,8 +5,8 @@ var fs = null;
 window.path = "/";
 window.actualDirectory = null;
 
-var fileSystemPath = "filesystem:file:///persistent";
-//var fileSystemPath = "filesystem:http://samples-of-html5.appspot.com/persistent";
+//var fileSystemPath = "filesystem:file:///persistent";
+var fileSystemPath = "filesystem:http://samples-of-html5.appspot.com/persistent";
 
 
 var analyser = null;
@@ -401,15 +401,14 @@ function drop(e){
     
     for (var i = 0; i < length; i++) {
         entry = e.dataTransfer.items[i].webkitGetAsEntry();
-        console.log(entry.toURL());
         entries[i] = entry;
         if (entry.isDirectory) {
             entry.copyTo(actualDirectory, null, function(copiedEntry) {
-               //update() 
+               update() 
             }, errorHandler);
         }else{
             entry.copyTo(actualDirectory, null, function(copiedEntry) {
-               //update()
+               update()
             }, errorHandler);
         }
     }
@@ -658,7 +657,7 @@ function listFileSystem(dir){
 
 function loadDirectory(e){
     
-
+    //TODO
 
 
 }
