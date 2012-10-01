@@ -44,26 +44,155 @@ URL: https://code.google.com/p/io-2012-slides
 
   <slide>
     <hgroup>
-      <h2>Slide with Bullets</h2>
+      <h2>Agenda</h2>
     </hgroup>
-    <article>
+    <article class="smaller">
+      <h3>APIs en HTML5</h3>
       <ul>
-        <li>Titles are formatted as Open Sans with bold applied and font size is set at 45</li>
-        <li>Title capitalization is title case
+        <li>File API
           <ul>
-            <li>Subtitle capitalization is title case</li>
+            <li>Blob</li>
+            <li>File</li>
+            <li>File List</li>
+            <li>File Reader</li>
           </ul>
         </li>
-        <li>Subtitle capitalization is title case</li>
-        <li>Titles and subtitles should never have a period at the end</li>
+        <li>File System API</li>
+        <ul>
+            <li>File Writer</li>
+            <li>Directory Entry</li>
+            <li>File Entry</li>
+        </ul>
+        <li>Audio / Video</li>
+        <li>Web Audio API</li>
+        <li>Indexed DataBase API</li>
       </ul>
     </article>
   </slide>
 
   <slide>
     <hgroup>
-      <h2>Slide with Bullets that Build</h2>
-      <h3>Subtitle Placeholder</h3>
+      <h2>File API</h2>
+      <h3>Importando y recuperando Archivos</h3>
+    </hgroup>
+    <article class="smaller">
+      <p></p>
+      <pre class="prettyprint" data-lang="html">
+  &lt;input type="file" id="files" name="files[]" multiple />
+      </pre>
+      <pre class="prettyprint" data-lang="javascript">
+//Existe soporte de File API
+if (window.File && window.FileReader && window.FileList && window.Blob) {
+  // Success!!
+} else {
+  alert('File API no esta soportada por el navegador');
+}
+function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('&lt;li&gt;&lt;strong&gt;', escape(f.name), '&lt;/strong&gt; (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate.toLocaleDateString(), '&lt;/li&gt;');
+    }
+    document.getElementById('list').innerHTML = '&lt;ul&gt;' + output.join('') + '&lt;/ul&gt;';
+  }
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>File API</h2>
+      <h3>Importando y recuperando Archivos</h3>
+    </hgroup>
+    <article class="smaller">
+      <p></p>
+      <pre class="prettyprint" data-lang="html">
+  &lt;input type="file" id="files" name="files[]" multiple />
+      </pre>
+      <pre class="prettyprint" data-lang="javascript">
+//Existe soporte de File API
+if (window.File && window.FileReader && window.FileList && window.Blob) {
+  // Success!!
+} else {
+  alert('File API no esta soportada por el navegador');
+}
+function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('&lt;li&gt;&lt;strong&gt;', escape(f.name), '&lt;/strong&gt; (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate.toLocaleDateString(), '&lt;/li&gt;');
+    }
+    document.getElementById('list').innerHTML = '&lt;ul&gt;' + output.join('') + '&lt;/ul&gt;';
+  }
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    </pre>
+    </article>
+  </slide>
+
+
+  <slide>
+    <hgroup>
+      <h2>File API</h2>
+    </hgroup>
+    <article class="smaller">
+      <div>
+        <input type="file" id="files" name="files[]" multiple />
+        <output class="smaller" id="list"></output>
+        <script type="text/javascript">
+          document.addEventListener("change", onChange, false);
+          function onChange(evt){
+            var files = evt.target.files;
+            var output = [];
+            for (var i = 0, f; f = files[i]; i++) {
+              output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate.toLocaleDateString(), '</li>');
+            }
+            document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+          }
+        </script>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>File API</h2>
+      <h3>Importando y recuperando Archivos</h3>
+    </hgroup>
+    <article class="smaller">
+      <p></p>
+      <pre class="prettyprint" data-lang="html">
+  &lt;input type="file" id="files" name="files[]" multiple />
+      </pre>
+      <pre class="prettyprint" data-lang="javascript">
+//Existe soporte de File API
+if (window.File && window.FileReader && window.FileList && window.Blob) {
+  // Success!!
+} else {
+  alert('File API no esta soportada por el navegador');
+}
+function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('&lt;li&gt;&lt;strong&gt;', escape(f.name), '&lt;/strong&gt; (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate.toLocaleDateString(), '&lt;/li&gt;');
+    }
+    document.getElementById('list').innerHTML = '&lt;ul&gt;' + output.join('') + '&lt;/ul&gt;';
+  }
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>File API</h2>
+      <h3>Ejemplo</h3>
     </hgroup>
     <article>
       <p>A list where items build:</p>
@@ -102,8 +231,8 @@ URL: https://code.google.com/p/io-2012-slides
 
   <slide>
     <hgroup>
-      <h2>Code Slide (with Subtitle Placeholder)</h2>
-      <h3>Subtitle Placeholder</h3>
+      <h2>File API</h2>
+      <h3></h3>
     </hgroup>
     <article>
       <p>Press 'h' to highlight important sections of code (wrapped in <code>&lt;b&gt;</code>).</p>

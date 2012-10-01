@@ -1495,4 +1495,16 @@ aside.gdbar img {
   pre, code {
     font-family: monospace !important;
   }
+
+  .examples{
+    padding: 10px;
+    border: 1px solid #CCC;
+  }
+
+  .examples output{
+    font-size: 15px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+
 }
