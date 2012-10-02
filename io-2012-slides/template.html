@@ -235,7 +235,7 @@ function handleFileSelect(evt) {
     </article>
   </slide>
 
-  <slide>
+  <!--slide>
     <hgroup>
       <h2>File API</h2>
       <h3><span class="blue">Importando Archivos</span> => File / FileList</h3>
@@ -259,7 +259,7 @@ function handleFileSelect(evt) {
         </script>
       </div>
     </article>
-  </slide>
+  </slide-->
 
   <slide>
     <hgroup>
@@ -274,28 +274,18 @@ function handleFileSelect(evt) {
 function onDrop(evt) {
     evt.stopPropagation();
     evt.preventDefault();
-
     <b>var files = evt.dataTransfer.files; // Objecto FileListb</b>
-
     var output = [];
     for (var i = 0, f; f = files[i]; i++) {
-      output.push('&lt;li>&lt;strong>', escape(f.name), '&lt;/strong> (', f.type || 'n/a', ') - ',
-                  f.size, ' bytes, last modified: ',
-                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-                  '&lt;/li>');
+      <b>//TODO f.name, f.size, f.lastModifiedDate, f.type</b>
     }
     document.getElementById('list').innerHTML = '&lt;ul>' + output.join('') + '&lt;/ul>';
   }
-
   function onDragOver(evt) {
     evt.stopPropagation();
     evt.preventDefault();
     evt.dataTransfer.dropEffect = 'copy';
   }
-
-  var dropZone = document.querySelector('[id="drop_zone"]');
-  dropZone.addEventListener('dragover', onDragOver, false);
-  dropZone.addEventListener('drop', onDrop, false);
 }
       </pre>
     </article>
@@ -304,24 +294,23 @@ function onDrop(evt) {
   <slide>
     <hgroup>
       <h2>File API</h2>
-      <h3>Ejemplo</h3>
+      <h3><span class="blue">FileReader</span></h3>
     </hgroup>
     <article>
-      <p>A list where items build:</p>
-      <ul class="build">
-        <li>Pressing 'h' highlights code snippets</li>
-        <li>Pressing 'p' toggles speaker notes (if they're on the current slide)</li>
-        <li>Pressing 'f' toggles fullscreen viewing</li>
-        <li>Pressing 'w' toggles widescreen</li>
-        <li>Pressing 'o' toggles overview mode</li>
-        <li>Pressing 'ESC' toggles off these goodies</li>
-      </ul>
-      <p>Another list, but items fade as they build:</p>
-      <ul class="build fade">
-        <li>Hover over me!</li>
-        <li>Hover over me!</li>
-        <li>Hover over me!</li>
-      </ul>
+     <table>
+        <tr>
+          <td>FileReader.readAsBinaryString(Blob|File)</td><td>La propiedad result contendra la informacon del File o Blob como un String binario.</td>
+        </tr>
+        <tr>
+          <td>FileReader.readAsText(Blob|File, opt_encoding)</td><td>La propiedad result contendra la informacon del File o Blob como un string de texto, por defecto el string es codificado en UTF-8.</td>
+        </tr>
+        <tr>
+          <td>FileReader.readAsDataURL(Blob|File)</td><td>La propiedad result contendra el contenido del Blob o File codificado como una URL data<br><b>data:[&lt;MIME-type>][;charset=&lt;encoding>][;base64],&lt;data></b></td>
+        </tr>
+        <tr>
+          <td>FileReader.readAsArrayBuffer(Blob|File)</td><td>La propiedad result contendra el contenido del Blob o File como un ArrayBuffer</td>
+        </tr>
+      </table>
     </article>
   </slide>
 

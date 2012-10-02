@@ -57,7 +57,7 @@ function errorHandler(e) {
  * Inicializa el FileSystem
  */
 function initFS() {
-	window.webkitStorageInfo.requestQuota(PERSISTENT, 12 * 1024 * 1024,
+	window.webkitStorageInfo.requestQuota(PERSISTENT, 15 * 1024 * 1024,
 			function(grantedBytes) {
 				window.requestFileSystem(PERSISTENT, grantedBytes, function(
 						filesystem) {
