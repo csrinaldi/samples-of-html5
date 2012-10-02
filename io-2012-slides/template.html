@@ -238,12 +238,12 @@ function handleFileSelect(evt) {
   <slide>
     <hgroup>
       <h2>File API</h2>
-      <h3><span class="blue">Recuperando Archivos</span> => File / FileList</h3>
+      <h3><span class="blue">Importando Archivos</span> => File / FileList</h3>
     </hgroup>
     <article class="smaller">
       <div style="padding: 10px; border: 1px solid #CCC;">
         <input type="file" id="files" name="files[]" multiple />
-        <output id="list"></output>
+        <output id="list"></output><h2>File API</h2>
         <script type="text/javascript">
           document.addEventListener("change", onChange, false);
           function onChange(evt){
@@ -263,32 +263,41 @@ function handleFileSelect(evt) {
 
   <slide>
     <hgroup>
-      <h2>File API</h2>
-      <h3>Importando y recuperando Archivos</h3>
+    <h3><span class="blue">Drag And Drop</span> => File / FileList</h3>
     </hgroup>
     <article class="smaller">
-      <p></p>
       <pre class="prettyprint" data-lang="html">
-  &lt;input type="file" id="files" name="files[]" multiple />
+        &lt;div id="drop_zone">Drop files here&lt;/div>
+        &lt;output id="list">&lt;/output>
       </pre>
       <pre class="prettyprint" data-lang="javascript">
-//Existe soporte de File API
-if (window.File && window.FileReader && window.FileList && window.Blob) {
-  // Success!!
-} else {
-  alert('File API no esta soportada por el navegador');
-}
-function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
+function onDrop(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    <b>var files = evt.dataTransfer.files; // Objecto FileListb</b>
+
     var output = [];
     for (var i = 0, f; f = files[i]; i++) {
-      output.push('&lt;li&gt;&lt;strong&gt;', escape(f.name), '&lt;/strong&gt; (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ',
-                  f.lastModifiedDate.toLocaleDateString(), '&lt;/li&gt;');
+      output.push('&lt;li>&lt;strong>', escape(f.name), '&lt;/strong> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                  '&lt;/li>');
     }
-    document.getElementById('list').innerHTML = '&lt;ul&gt;' + output.join('') + '&lt;/ul&gt;';
+    document.getElementById('list').innerHTML = '&lt;ul>' + output.join('') + '&lt;/ul>';
   }
-  document.getElementById('files').addEventListener('change', handleFileSelect, false);
-    </pre>
+
+  function onDragOver(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy';
+  }
+
+  var dropZone = document.querySelector('[id="drop_zone"]');
+  dropZone.addEventListener('dragover', onDragOver, false);
+  dropZone.addEventListener('drop', onDrop, false);
+}
+      </pre>
     </article>
   </slide>
 

@@ -715,7 +715,8 @@ function loadFromServer(event) {
 				create : true,
 				exclusive : true
 			}, function(fileEntry) {
-				fileEntry.createWriter(function(writer) {
+				
+				fileEntry.createWriter(function(fileWriter) {
 					fileWriter.onwriteend = function(e) {
 						console.log('El archivo fue escrito correctamente.');
 					};
@@ -723,7 +724,7 @@ function loadFromServer(event) {
 					fileWriter.onerror = function(e) {
 						errorHandler(e);
 					};
-					writer.write(blob);
+					fileWriter.write(blob);
 					update();
 				}, errorHandler(e));
 			}, errorHandler(e));
