@@ -428,6 +428,15 @@ document.body.appendChild(linkCss);
   </slide>
 
   <slide class="nobackground">
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Iniciar chrome con --unlimited-quota-for-files, posibilita tamaño ilimitado</li>
+          <li>Si es extensión de Google Chrome, en el manifest unlimitedStorage </li>
+          <li>Si estamos trabajando con el protocolo file://  iniciar chrome con --allow-file-access-from-files y no tendremos ninguno de estos errores: SECURITY_ERR y QUOTA_EXCEEDED_ERR  </li>
+        </ul>
+      </section>
+    </aside>
     <hgroup>
       <h2>File System API (Asynchronous APIs)</h2>
       <h3>Abriendo el FileSystem</h3>
@@ -704,10 +713,10 @@ window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL
   <slide class="nobackground">
     <hgroup>
       <h2>Indexed DB</h2>
-      <h3><a href="http://www.w3.org/TR/IndexedDB/">Espesificación</a></h3>
+      <h3><a href="http://www.w3.org/TR/IndexedDB/">Especificación</a></h3>
     </hgroup>
     <article class="smaller" style="margin-top:0px;">
-      <p>IndexedDB es un API para almacenamiento de cantidades significantes de iformación estructurada en el cliente. Tiene una gran eficiencia debido a que hace uso de indices para traer la información.
+      <p>IndexedDB es un API para almacenamiento de cantidades significativas de iformación estructurada en el cliente. Tiene una gran eficiencia debido a que hace uso de indices para traer la información.
     </article>
     <table>
         <tr>
@@ -717,7 +726,7 @@ window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL
             <td style="padding: 10px 0.5em; font-size:12px">IDBCursor</td><td style="padding: 5px 0.5em; font-size:12px">Permite la iteración sobre los objetos guardados e Indices</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0.5em; font-size:12px">IDBDatabase</td><td style="padding: 5px 0.5em; font-size:12px">Representa una conección a la Base de Datos</td>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBDatabase</td><td style="padding: 5px 0.5em; font-size:12px">Representa una conexión a la Base de Datos</td>
           </tr>
           <tr>
             <td style="padding: 10px 0.5em; font-size:12px">IDBEnvironment</td><td style="padding: 5px 0.5em; font-size:12px">Provee acceso a la base de datos, window implementa esta interface.  </td>
@@ -738,7 +747,7 @@ window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL
             <td style="padding: 10px 0.5em; font-size:12px">IDBRequest </td><td style="padding: 5px 0.5em; font-size:12px">Provee acceso asincrónico a los resultados de los request realizados a la DB y a los object stores.</td>
           </tr>
            <tr>
-            <td style="padding: 10px 0.5em; font-size:12px">IDBTransaction</td><td style="padding: 5px 0.5em; font-size:12px">Representa una transacción, toda operación debe realizarce en un scope de transacción, esta transacción puede ser de lectura o escritura.</td>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBTransaction</td><td style="padding: 5px 0.5em; font-size:12px">Representa una transacción, toda operación debe realizarse en un scope de transacción, esta transacción puede ser de lectura o escritura.</td>
           </tr>
         </table>
   </slide>
@@ -976,7 +985,7 @@ interface GraphicalWindow {
       <h4 class="blue"><a href="https://developers.google.com/web-toolkit/articles/elemental">Google Web Toolkit</a></h4>
     </hgroup>
     <article class="smaller white" style="margin-left:350px">
-      <p><b><a href="https://developers.google.com/web-toolkit/articles/elemental">Elemental</a></b> es una nueva librería de GWT, rápida y libiana, la cual implementa las IDLs definidas por las especificaciones. </p>
+      <p><b><a href="https://developers.google.com/web-toolkit/articles/elemental">Elemental</a></b> es una nueva librería de GWT, rápida y liviana, la cual implementa las IDLs definidas por las especificaciones. </p>
       <p>Ideal para el desarrollo de aplicaciones móviles y aplicaciones web.<p><br>
       <p><b>Elemental</b> incluye todas las características de HTML5:</p>
       <ul>

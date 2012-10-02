@@ -20,7 +20,7 @@ var SLIDE_CONFIG = {
   presenters: [{
     name: 'Cristian Rinaldi',
     company: 'Co-Founder Logikas',
-    gplus: 'http://plus.google.com/1234567890',
+    gplus: 'http://goo.gl/ePZ4u',
     twitter: '@csrinaldi',
     www: 'http://www.logikas.com',
     github: 'http://github.com/you'

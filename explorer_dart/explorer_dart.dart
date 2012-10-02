@@ -3,7 +3,7 @@
 html.DOMFileSystem fs;
 html.DirectoryEntry actualDirectory;
 var path;
- 
+var fileSystemPath = "filesystem:http://samples-of-html5.appspot.com/persistent";
 
 void main() {
   
@@ -20,10 +20,10 @@ void main() {
 
 }
 
-void onChange(e){
-  html.EntryArray entries = e.target.webkitEntries;
+void onChange(evt){
+  html.EntryArray entries = evt.target.webkitEntries;
   entries.forEach((html.DirectoryEntry entry) {
-    entry.copyTo(actualDirectory, entry.name, (entry){
+    entry.copyTo(actualDirectory, entry.name, (copyEntry){
       updateExplorer();
     }, (e) => errorHandler(e));
   });
@@ -211,16 +211,20 @@ void cd(path, op){
   }
   path = path;
 
-  window.resolveLocalFileSystemURL(fileSystemPath+path, function(fileEntry) {
-    actualDirectory = fileEntry;
-    updateBarLocation(fileEntry.fullPath);
-    var dirReader = fileEntry.createReader();
+  html.window.webkitResolveLocalFileSystemURL(fileSystemPath.concat(path), (html.DirectoryEntry entry) {
+    actualDirectory = entry;
+    updateBarLocation(entry.fullPath);
+    var dirReader;
+    dirReader = entry.createReader();
     var dirs = [];
     dirReader.readEntries(function(dirs){
       addNodeExplorer(dirs);
-    }, errorHandler);
-  }, errorHandler);
-  }
+    }, (e) => errorHandler(e));
+  }, (e) => errorHandler(e));
+}
+
+void updateBarLocation(path) {
+  html.document.query('[id="location"]').attributes["placeholder"] =  fileSystemPath.concat(path);
 }
 
 void loadFileSystem(){
