@@ -48,35 +48,169 @@ URL: https://code.google.com/p/io-2012-slides
     </hgroup>
     <article class="smaller">
       <h3>APIs en HTML5</h3>
-      <ul>
-        <li>File API
-          <ul>
-            <li>Blob</li>
-            <li>File</li>
-            <li>File List</li>
-            <li>File Reader</li>
-          </ul>
-        </li>
-        <li>File System API</li>
+      <div class="columns-3" style="">
         <ul>
+          <li class="red">XMLHttpRequest V2</li>
+          <li class="red2">File API</li>
+            <ul>
+              <li>File List</li>
+              <li>File Reader</li>
+              <li>Blob</li>
+              <li>File</li>
+          </ul>
+        </ul>
+        <ul>
+          <li>File System API<li>
+          <ul>
             <li>File Writer</li>
             <li>Directory Entry</li>
             <li>File Entry</li>
+          </ul>
         </ul>
-        <li>Audio / Video</li>
-        <li>Web Audio API</li>
-        <li>Indexed DataBase API</li>
-      </ul>
+
+        <ul>
+          <li>Audio / Video</li>
+          <li>Web Audio API</li>
+          <li>Indexed DataBase API</li>
+        </ul>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>XMLHTTPRequest V2</h2>
+      <h3>Novedades</h3>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="javascript">
+var xhr = new XMLHttpRequest();
+xhr.open('GET', '/path/to/image.png', true);
+<b>xhr.responseType = 'arraybuffer';</b>
+
+xhr.onload = function(e) {
+  if (this.status == 200) {
+    //this.response //TODO Respuesta del servidor 
+  }
+};
+xhr.send();
+    </pre>
+    <p style="font-size:14px"><b>xhr.responseType:</b><span> Antes de enviar la solicitud, se debe poner en xhr.responseType alguno de los siguientes valores  "text", "arraybuffer", "blob" o "document", segun los datos que se necesiten traer desde el servidor. Si se omite el valor en xhr.responseType o este es igual a '', se utilizará la respuesta predeterminada "text".</span></p>
+    <p style="font-size:14px"><b>xhr.response:</b><span> Si la solictud es correcta, la propiedad <b>response</b> de xhr contendrá los datos solicitados como: <b>DOMString, ArrayBuffer, Blob o Document</b> (segun el valor establecido en responseType).</p>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>XMLHTTPRequest V2</h2>
+      <h3>Enviando y recibiendo datos</h3>
+    </hgroup>
+    <article class="smaller centered">
+      <table>
+        <tr>
+          <th>Antes de HTML5</th><th>Ahora!!!</th>
+        </tr>
+        <tr>
+          <td>DOMString</td><td>DOMString</td>
+        </tr>
+        <tr>
+          <td>Document(XML)</td><td>Document(XML)</td>
+        </tr>
+        <tr>
+          <td></td><td class="highlight">ArrayBuffer</td>
+        </tr>
+        <tr>
+          <td></td><td class="highlight">Blob</td>
+        </tr>
+        <tr>
+          <td></td><td class="highlight">File</td>
+        </tr>
+        <tr>
+          <td></td><td class="highlight">FormData</td>
+        </tr>
+      </table>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>XMLHttpRequest V2</h2>
+      <h3>Enviando y Reciviendo datos</h3>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="javascript">
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'http://localhost:8888/resource', true);
+xhr.responseType = 'blob';
+
+xhr.onload = function(e) {
+  if (this.status == 200) {
+    var blob = this.response;
+
+    var url = window.URL.createObjectURL(blob);
+    console.log(url);
+    window.URL.revokeObjectURL(url);
+    
+  }
+};
+xhr.send();
+    </pre>
+    <button id="send">Dame un Blob!!!</button>
+    <script type="text/javascript">
+      document.querySelector('[id=send]').addEventListener("click", function(evt){
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://localhost:8888/resource', true);
+        xhr.responseType = 'blob';
+
+        xhr.onload = function(e) {
+          console.log(e);
+          if (this.status == 200) {
+            var blob = this.response;
+
+            var url = window.URL.createObjectURL(blob);
+            console.log(url);
+            window.URL.revokeObjectURL(url);
+          }
+      };
+      xhr.send();
+      }, false);
+    </script>
     </article>
   </slide>
 
   <slide>
     <hgroup>
       <h2>File API</h2>
-      <h3>Importando y recuperando Archivos</h3>
+      <h3>Componentes</h3>
     </hgroup>
     <article class="smaller">
-      <p></p>
+      <table>
+        <tr>
+          <td>File</td><td>El objeto File provee información sobre el Archivo, este Objeto generalmente es obtenido desde el FileList, DataTransfer o creado con el FileSystem API</td>
+        </tr>
+        <tr>
+          <td>FileList</td><td>Este objeto es obtenido desde la propiedad <b>files</b> del elemento input</td>
+        </tr>
+        <tr>
+          <td>Blob</td><td>Este objeto representa información binaria inmutable y permite acceso a rangos de bytes dentro del Blob, pero en Blobs separados</td>
+        </tr>
+        <tr>
+          <td>FileReader</td><td>Provee métodos para la lectura de File y Blob</td>
+        </tr>
+        <tr>
+          <td>URI Scheme</td><td>Se utilizan datos binarios como archivos, por lo que puden ser referenciados desde la app web.<br>
+         Por ejemplo: <b>blob:550e8400-e29b-41d4-a716-446655440000#aboutABBA</b>, puede ser utilizado en el atributo <b>src</b> del elemento <b>img</b></td>
+        </tr>
+      </table>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>File API</h2>
+      <h3><span class="blue">Recuperando Archivos</span> => File / FileList</h3>
+    </hgroup>
+    <article class="smaller">
       <pre class="prettyprint" data-lang="html">
   &lt;input type="file" id="files" name="files[]" multiple />
       </pre>
@@ -88,7 +222,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
   alert('File API no esta soportada por el navegador');
 }
 function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
+    var files = evt.target.files; // Objeto FileList
     var output = [];
     for (var i = 0, f; f = files[i]; i++) {
       output.push('&lt;li&gt;&lt;strong&gt;', escape(f.name), '&lt;/strong&gt; (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ',
@@ -104,51 +238,20 @@ function handleFileSelect(evt) {
   <slide>
     <hgroup>
       <h2>File API</h2>
-      <h3>Importando y recuperando Archivos</h3>
+      <h3><span class="blue">Recuperando Archivos</span> => File / FileList</h3>
     </hgroup>
     <article class="smaller">
-      <p></p>
-      <pre class="prettyprint" data-lang="html">
-  &lt;input type="file" id="files" name="files[]" multiple />
-      </pre>
-      <pre class="prettyprint" data-lang="javascript">
-//Existe soporte de File API
-if (window.File && window.FileReader && window.FileList && window.Blob) {
-  // Success!!
-} else {
-  alert('File API no esta soportada por el navegador');
-}
-function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
-    var output = [];
-    for (var i = 0, f; f = files[i]; i++) {
-      output.push('&lt;li&gt;&lt;strong&gt;', escape(f.name), '&lt;/strong&gt; (', f.type || 'n/a', ') - ', f.size, ' bytes, last modified: ',
-                  f.lastModifiedDate.toLocaleDateString(), '&lt;/li&gt;');
-    }
-    document.getElementById('list').innerHTML = '&lt;ul&gt;' + output.join('') + '&lt;/ul&gt;';
-  }
-  document.getElementById('files').addEventListener('change', handleFileSelect, false);
-    </pre>
-    </article>
-  </slide>
-
-
-  <slide>
-    <hgroup>
-      <h2>File API</h2>
-    </hgroup>
-    <article class="smaller">
-      <div>
+      <div style="padding: 10px; border: 1px solid #CCC;">
         <input type="file" id="files" name="files[]" multiple />
-        <output class="smaller" id="list"></output>
+        <output id="list"></output>
         <script type="text/javascript">
           document.addEventListener("change", onChange, false);
           function onChange(evt){
             var files = evt.target.files;
             var output = [];
             for (var i = 0, f; f = files[i]; i++) {
-              output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-                  f.size, ' bytes, last modified: ',
+              output.push('<li style="font-size:12px;margin-top:10px;"><b>', escape(f.name), '</b> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, modificado: ',
                   f.lastModifiedDate.toLocaleDateString(), '</li>');
             }
             document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
@@ -404,7 +507,7 @@ function helloWorld(world) {
 
   <slide>
     <hgroup>
-      <h2>Table Option B</h2>
+      <h2>Table Option B sdasdasd</h2>
       <h3>Subtitle Placeholder</h3>
     </hgroup>
     <article>
@@ -430,7 +533,7 @@ function helloWorld(world) {
 
   <slide>
     <hgroup>
-      <h2>Slide Styles</h2>
+      <h2>Slide Styles HOLA</h2>
     </hgroup>
     <article class="smaller">
       <div class="columns-2">

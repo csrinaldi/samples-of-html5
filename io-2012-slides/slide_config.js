@@ -2,7 +2,7 @@ var SLIDE_CONFIG = {
   // Slide settings
   settings: {
     title: 'Evolución del desarrollo Web',
-    subtitle: 'HTML 5, GWT, Google Dart',
+    subtitle: 'HTML 5, Elemental (GWT), Google Dart',
     useBuilds: true, // Default: true. False will turn off slide animation builds.
     usePrettify: true, // Default: true
     enableSlideAreas: true, // Default: true. False turns off the click areas on either slide of the slides.

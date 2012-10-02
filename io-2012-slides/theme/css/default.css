@@ -727,6 +727,13 @@ button:not(:disabled):active {
   column-count: 2;
 }
 
+.columns-3{
+  -webkit-column-count: 3;
+  -moz-column-count: 3;
+  -o-column-count: 3;
+  column-count: 3;
+}
+
 /* line 508, ../scss/default.scss */
 table {
   width: 100%;
