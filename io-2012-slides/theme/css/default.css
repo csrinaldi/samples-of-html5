@@ -320,7 +320,7 @@ slides > slide:not(.nobackground):after {
 /* line 194, ../scss/default.scss */
 slides > slide.title-slide:after {
   content: '';
-  background: url(../../images/io2012_logo.png) no-repeat 100% 50%;
+  background: url(../../images/logikas_logo.png) no-repeat 100% 50%;
   -webkit-background-size: contain;
   -moz-background-size: contain;
   -o-background-size: contain;
@@ -777,6 +777,10 @@ table td.highlight {
   background: -ms-linear-gradient(top, #ffd14d 40%, #f6c000 80%) no-repeat;
   background: linear-gradient(top, #ffd14d 40%, #f6c000 80%) no-repeat;
 }
+
+table td.small{
+ padding: 8px 0.5em; 
+}
 /* line 540, ../scss/default.scss */
 table.rows {
   border-bottom: none;
@@ -1226,8 +1230,8 @@ article.smaller q:before, article.smaller q:after {
 /* ===== SLIDE CONTENT ===== */
 /* line 839, ../scss/default.scss */
 .logoslide img {
-  width: 383px;
-  height: 92px;
+  /*width: 383px;
+  height: 92px;*/
 }
 
 /* line 845, ../scss/default.scss */

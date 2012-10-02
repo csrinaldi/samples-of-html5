@@ -28,7 +28,7 @@ URL: https://code.google.com/p/io-2012-slides
 
   <slide class="logoslide nobackground">
     <article class="flexbox vcenter">
-      <span><img src="images/google_developers_logo.png"></span>
+      <span><img src="images/logo_devfest.png"></span>
     </article>
   </slide>
 
@@ -42,42 +42,29 @@ URL: https://code.google.com/p/io-2012-slides
     </hgroup>
   </slide>
 
-  <slide>
-    <hgroup>
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/google_developers_icon_128.png"></aside>
+    <hgroup class="auto-fadein">
       <h2>Agenda</h2>
     </hgroup>
-    <article class="smaller">
-      <h3>APIs en HTML5</h3>
-      <div class="columns-3" style="">
+    <article style="margin-left:450px;">
+      <h4 class="blue" style="margin-bottom:50px;">Introducción a HTML 5 APIs</h4>
+      <div class="white">
         <ul>
-          <li class="red">XMLHttpRequest V2</li>
-          <li class="red2">File API</li>
-            <ul>
-              <li>File List</li>
-              <li>File Reader</li>
-              <li>Blob</li>
-              <li>File</li>
-          </ul>
-        </ul>
-        <ul>
+          <li>XMLHttpRequest V2</li>
+          <li>File API</li>
           <li>File System API<li>
-          <ul>
-            <li>File Writer</li>
-            <li>Directory Entry</li>
-            <li>File Entry</li>
-          </ul>
-        </ul>
-
-        <ul>
-          <li>Audio / Video</li>
-          <li>Web Audio API</li>
+          <li>File Writer</li>
           <li>Indexed DataBase API</li>
+          <li>IDLs</li>
+          <li>Elemental</li>
+          <li>Google Dart</li>
         </ul>
       </div>
     </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
     <hgroup>
       <h2>XMLHTTPRequest V2</h2>
       <h3>Novedades</h3>
@@ -100,7 +87,7 @@ xhr.send();
     </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
     <hgroup>
       <h2>XMLHTTPRequest V2</h2>
       <h3>Enviando y recibiendo datos</h3>
@@ -132,7 +119,7 @@ xhr.send();
     </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
     <hgroup>
       <h2>XMLHttpRequest V2</h2>
       <h3>Enviando y Reciviendo datos</h3>
@@ -155,11 +142,11 @@ xhr.onload = function(e) {
 };
 xhr.send();
     </pre>
-    <button id="send">Dame un Blob!!!</button>
+    <!--button id="send">Dame un Blob!!!</button-->
     <script type="text/javascript">
       document.querySelector('[id=send]').addEventListener("click", function(evt){
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:8888/resource', true);
+        xhr.open('GET', 'http://samples-of-html5.appspot.com/resource', true);
         xhr.responseType = 'blob';
 
         xhr.onload = function(e) {
@@ -178,7 +165,7 @@ xhr.send();
     </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
     <hgroup>
       <h2>File API</h2>
       <h3>Componentes</h3>
@@ -205,7 +192,7 @@ xhr.send();
     </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
     <hgroup>
       <h2>File API</h2>
       <h3><span class="blue">Recuperando Archivos</span> => File / FileList</h3>
@@ -221,7 +208,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
 } else {
   alert('File API no esta soportada por el navegador');
 }
-function handleFileSelect(evt) {
+function onChange(evt) {
     var files = evt.target.files; // Objeto FileList
     var output = [];
     for (var i = 0, f; f = files[i]; i++) {
@@ -230,38 +217,12 @@ function handleFileSelect(evt) {
     }
     document.getElementById('list').innerHTML = '&lt;ul&gt;' + output.join('') + '&lt;/ul&gt;';
   }
-  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+  document.getElementById('files').addEventListener('change', onChange, false);
     </pre>
     </article>
   </slide>
 
-  <!--slide>
-    <hgroup>
-      <h2>File API</h2>
-      <h3><span class="blue">Importando Archivos</span> => File / FileList</h3>
-    </hgroup>
-    <article class="smaller">
-      <div style="padding: 10px; border: 1px solid #CCC;">
-        <input type="file" id="files" name="files[]" multiple />
-        <output id="list"></output><h2>File API</h2>
-        <script type="text/javascript">
-          document.addEventListener("change", onChange, false);
-          function onChange(evt){
-            var files = evt.target.files;
-            var output = [];
-            for (var i = 0, f; f = files[i]; i++) {
-              output.push('<li style="font-size:12px;margin-top:10px;"><b>', escape(f.name), '</b> (', f.type || 'n/a', ') - ',
-                  f.size, ' bytes, modificado: ',
-                  f.lastModifiedDate.toLocaleDateString(), '</li>');
-            }
-            document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-          }
-        </script>
-      </div>
-    </article>
-  </slide-->
-
-  <slide>
+  <slide class="nobackground">
     <hgroup>
     <h3><span class="blue">Drag And Drop</span> => File / FileList</h3>
     </hgroup>
@@ -291,7 +252,55 @@ function onDrop(evt) {
     </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
+    <hgroup>
+    <h2>File API - Ejemplos</h2>
+    <h3><span class="blue">Importar / Drag And Drop</span></h3>
+    </hgroup>
+    <article class="smaller">
+      <div style="padding: 10px; border: 1px solid #CCC;">
+        <input type="file" id="files" name="files[]" multiple />
+        <output id="list"></output>
+      </div>
+      <div id="drag-zone" style="-webkit-justify-content:center; display: -webkit-flex; -webkit-align-items: center;margin-top:40px; height:100px; padding: 25px; border: 1px solid #CCC;">Arrastre los archivos aquí</div>
+      <output id="list-drop"></output>
+
+        <script type="text/javascript">
+          document.addEventListener("change", onChange, false);
+          document.querySelector('[id="drag-zone"]').addEventListener("drop", onDrop, false);
+          var output = [];
+          function onChange(evt){
+            output = [];
+            var files = evt.target.files;
+            for (var i = 0, f; f = files[i]; i++) {
+              write(f);
+            }
+            document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+          }
+
+          function onDrop(evt){
+            evt.stopPropagation(); // Stops some browsers from redirecting.
+            evt.preventDefault();
+            output = [];
+            var length = evt.dataTransfer.files.length;
+            for (var i = 0; i < length; i++) {
+              var file = evt.dataTransfer.files[i];
+              write(file);
+            }
+            document.getElementById('list-drop').innerHTML = '<ul>' + output.join('') + '</ul>';
+          }
+
+          function write(f){
+            output.push('<li style="font-size:12px;margin-top:10px;"><b>', escape(f.name), '</b> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, modificado: ',
+                  f.lastModifiedDate.toLocaleDateString(), '</li>');
+          }
+        </script>
+    </article>
+  </slide>
+
+
+  <slide class="nobackground">
     <hgroup>
       <h2>File API</h2>
       <h3><span class="blue">FileReader</span></h3>
@@ -314,270 +323,755 @@ function onDrop(evt) {
     </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
     <hgroup>
-      <h2>Slide with (Smaller Font)</h2>
+      <h2>Data URL & Blob URL</h2>
     </hgroup>
     <article class="smaller">
-      <ul>
-        <li>All <a href="http://google.com">links</a> open in new tabs.</li>
-        <li>To change that this, add <code>target="_self"</code> to the link.</li>
-      </ul>
+      <table>
+        <tr>
+          <td>Data URL</td><td>data:[&lt;mediatype>][;base64],&lt;data></td>
+        </tr>
+        <tr>
+          <td>Blob URL</td><td>window.URL.createObjectURL(), window.URL.revokeObjectURL(). 
+          <br>Se puede acceder a las URL de Blobs creados en Chrome en la siguiente URL <a href="chrome://blob-internals/" target="_blank">chrome://blob-internals/</a></td>
+        </tr>
+      </table>
+      <br>
+      <pre class="prettyprint" data-lang="javascript">
+var linkCss  = document.createElement('link');
+linkCss.rel  = 'stylesheet';
+<b>linkCss.href = 'data:text/css;base64,' +
+            window.btoa('body { background: red;  }');</b>
+
+document.head.appendChild(linkCss);
+      </pre>
+      <pre class="prettyprint" data-lang="javascript">
+window.URL = window.URL || window.webkitURL;
+
+var blob = new Blob(['body { color: red; }'], {type: 'text/css'});
+
+var linkCss = document.createElement('link');
+linkCss.rel = 'stylesheet';
+<b>linkCss.href = window.URL.createObjectURL(blob);</b>
+document.body.appendChild(linkCss);
+      </pre>
     </article>
   </slide>
 
-  <slide hidden>
-    Hidden slides are left out of the presentation.
+  <slide class="nobackground">
+    <hgroup>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3 class="blue"><a href="http://dev.w3.org/2009/dap/file-system/pub/FileSystem/#data-persistence-and-accessing-the-api">File API: Directories and System</a></h3>
+    </hgroup>
+    <article class="smaller">
+      <p>El API de File System, simula un file system local que las aplicaciones web pueden navegar e interactura. Utilizando esta podrán hacer aplicaciones que lean, escriban, creen archivos y directorios en el Sistema de Archivos virtual.</p>
+      <p>Este API interactúa con otras APIs relacionadas, por ejemplo <a href="http://www.w3.org/TR/file-writer-api/">File Writer API</a> que esta construida sobre <a href="http://www.w3.org/TR/FileAPI/#dfn-file">File API</a>, cada API agrega funcionalidades particulares</p>
+     
+      <table>
+        <tr>
+            <td>LocalFileSystem</td><td>Tiene dos métodos globales para el acceso al FileSystem: <b>requestFileSystem()</b> y <b>resolveLocalFileSystemURL()</b> </td>
+          </tr>
+          <tr>
+            <td>FileSystem</td><td>Representa el FileSystem</td>
+          </tr>
+          <tr>
+            <td>Entry</td><td>Representa una entrada del FileSystem</td>
+          </tr>
+          <tr>
+            <td>DirectoryEntry</td><td>Representa una entrada de Directorio en el FileSystem</td>
+          </tr>
+          <tr>
+            <td>DirectoryReader</td><td>Por medio de éste podremos listar los archivos y directorios de un directorio</td>
+          </tr>
+          <tr>
+            <td>FileError</td><td>Este objeto es el que contedrá el error en el caso que exista uno en el procesamiento de los método asincrónicos</td>
+          </tr>
+        </table>
+    </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Métodos de la clase Entry</li>
+        </ul>
+      </section>
+    </aside>
     <hgroup>
-      <h2>File API</h2>
-      <h3></h3>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3 class="blue">Entry Metodos</h3>
     </hgroup>
     <article>
-      <p>Press 'h' to highlight important sections of code (wrapped in <code>&lt;b&gt;</code>).</p>
-      <pre class="prettyprint" data-lang="javascript">
-&lt;script type='text/javascript'&gt;
-  // Say hello world until the user starts questioning
-  // the meaningfulness of their existence.
-  function helloWorld(world) {
-    <b>for (var i = 42; --i &gt;= 0;) {
-      alert('Hello ' + String(world));
-    }</b>
-  }
-&lt;/script&gt;
-</pre>
+      <table class="smaller">
+        <tr>
+            <td>void getMetada (in MetadataCallback successCallback, in optional ErrorCallback errorCallback);</td>
+          </tr>
+          <tr>
+            <td>void moveTo (in DirectoryEntry parent, optional DOMString newName, in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);</td>
+          </tr>
+          <tr>
+            <td>void copyTo (in DirectoryEntry parent, in optional DOMString newName, in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);</td>
+          </tr>
+          <tr>
+            <td>void toURL (in optional DOMString mimeType);</td>
+          </tr>
+          <tr>
+            <td>void remove (in VoidCallback successCallback, in optional ErrorCallback errorCallback);</td>
+          </tr>
+          <tr>
+            <td>void getParent (in EntryCallback successCallback, in optional ErrorCallback errorCallback);</td>
+          </tr>
+        </table>
     </article>
   </slide>
 
-  <slide>
+  <slide class="nobackground">
     <hgroup>
-      <h2>Code Slide (Smaller Font)</h2>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3>Abriendo el FileSystem</h3>
     </hgroup>
     <article class="smaller">
       <pre class="prettyprint" data-lang="javascript">
-// Say hello world until the user starts questioning
-// the meaningfulness of their existence.
-function helloWorld(world) {
-  for (var i = 42; --i &gt;= 0;) {
-    alert('Hello ' + String(world));
+window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(
+      filesystem) {
+  fs = filesystem;
+  loadFs();
+}, errorHandler);
+      </pre>
+      <pre class="prettyprint" data-lang="javascript">
+window.webkitStorageInfo.requestQuota(PERSISTENT, 15 * 1024 * 1024,
+      function(grantedBytes) {
+        window.requestFileSystem(PERSISTENT, grantedBytes, function(
+            filesystem) {
+          fs = filesystem;
+          actualDirectory = fs.root;
+          loadFs();
+        }, errorHandler);
+      }, errorHandler);
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Métodos de la clase DirectoryEntry</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3 class="blue">DirectoryEntry Metodos</h3>
+    </hgroup>
+    <article>
+      <table class="smaller">
+        <tr>
+            <td>DirectoryReader createReader ();</td>
+          </tr>
+          <tr>
+            <td>void getFile (in DOMString path, in optional Flags options, in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);</td>
+          </tr>
+          <tr>
+            <td>void getDirectory (in DOMString path, in optional Flags options, in optional EntryCallback successCallback, in optional ErrorCallback errorCallback);</td>
+          </tr>
+          <tr>
+            <td>void removeRecursively (in Void Callback successCallback, in optional ErrorCallback errorCallback);</td>
+          </tr>
+        </table>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Acceso y creación de directorios</li>
+          <li>Opciones de creación</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3>Creando y Obteniendo Directorios</h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:0px">
+      <pre class="prettyprint" data-lang="javascript">
+function onFs(fs){
+  fs.root.getDirectory('Documents', {create:true}, function(directoryEntry){
+    //directoryEntry.isFile === false
+    //directoryEntry.isDirectory === true
+    //directoryEntry.name === 'Documents'
+    //directoryEntry.fullPath === '/Documents'
+    }, errorHandler);
+  }
+      </pre>
+      <table class="smaller">
+        <tr><th>Literal</th><th>Condición</th><th>Resultado</th></tr>
+        <tr>
+            <td class="small">create: true<br>
+                exclusive:true</td><td>Existe el Path</td><td>Un error es lanzado</td>
+          </tr>
+          <tr>
+            <td class="small">create: true<br>
+                exclusive: false</td><td>Si el path no existe y no ocurre otro error</td><td>El directorio es y ningún error es lanzado</td>
+          </tr>
+          <tr>
+            <td class="small">create: false<br>
+                (exclusive is ignored)</td><td>Si el Path existe</td><td>El directorio es creado</td>
+          </tr>
+          <tr>
+            <td class="small">create: false<br>
+                (exclusive is ignored</td><td>Si el Path no existe</td><td>Un error es lanzado</td>
+          </tr>
+          <tr>
+            <td class="small">create: false<br>
+                (exclusive is ignored)</td><td>Si el path existe y es un directorio</td><td>Un error es lanzado</td>
+          </tr>
+        </table>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Métodos de la clase FileEntry</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3 class="blue">FileEntry Metodos</h3>
+    </hgroup>
+    <article>
+      <table class="smaller">
+        <tr>
+            <td>void createWriter (FileWriterCallback successCallback, optional ErrorCallback errorCallback);</td>
+          </tr>
+          <tr>
+            <td>void file (FileCallback successCallback, optional ErrorCallback errorCallback);</td>
+          </tr>
+        </table>
+    </article>
+  </slide>
+  
+  <slide class="nobackground">
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Acceso y creación de directorios</li>
+          <li>Opciones de creación</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3>Creando y Obteniendo Directorios</h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:0px">
+      <pre class="prettyprint" data-lang="javascript">
+function onInitFs(fs) {
+   fs.root.getFile('log.txt', {create: true}, function(fileEntry) {
+     // Crea un Objeto FileWriter 
+    <b>fileEntry.createWriter(function(fileWriter)</b> {
+       fileWriter.onwriteend = function(e) {
+        console.log('Write completed.');
+      };
+       fileWriter.onerror = function(e) {
+        console.log('Write failed: ' + e.toString());
+      };
+       <b>var blob = new Blob([ 'Creamos nuestro File!!!!!!!' ], {
+        type : 'text/plain'
+      });</b>
+      <b>fileWriter.write(blob);</b>
+    }, errorHandler);
+  }, errorHandler);
+}
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Lo mismo se puede hacer en la seleccion de Archivos</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3>Importando Directorios</h3>
+    </hgroup>
+    <article  class="smaller">
+      <pre class="prettyprint" data-lang="html">
+&lt;input type="file" multiple webkitdirectory="" mozdirectory="" directory="">
+      </pre>
+      <pre class="prettyprint" data-lang="javascript">
+function onChange(e) {
+  e.stopPropagation();
+  e.preventDefault();
+
+  var entries = e.target.webkitEntries; // Tenemos todas como Entradas (Entry).
+
+  [].forEach.call(entries, function(entry) {
+
+    // Copia la entrada al FS
+    entry.copyTo(fs.root, null, function(copiedEntry) {
+      //TODO
+    }, onError);
+
+  });
+}        
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>File System API (Asynchronous APIs)</h2>
+      <h3>Drag and Drop Directorios</h3>
+    </hgroup>
+    <article  class="smaller">
+      <pre class="prettyprint" data-lang="javascript">
+function onDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  var items = e.dataTransfer.items;
+
+  for (var i = 0, item; item = items[i]; ++i) { 
+    var entry = item.webkitGetAsEntry();
+
+    // Si es un directorio copia la Entrada al FS
+    if (entry.isDirectory) {
+      entry.copyTo(fs.root, null, function(copiedEntry) {
+        // TODO
+      }, errorHandler);
+    }
+  }
+}       
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>FileSystem URL</h2>
+    </hgroup>
+    <article class="smaller" style="margin-top:5px;">
+      <ol>
+        <li style="text-decoration:line-through;">Blob URL</li>
+        <li style="text-decoration:line-through;">Data URL</li>
+        <li>FileSystem URL</li>
+      </ol>
+      <pre class="prettyprint" data-lang="javascript">
+// filesystem:http://&lt;origin>/&lt;temporary|persistent>/&lt;resource.png
+...        
+case 'image/jpeg':
+      var img = document.createElement('img');
+      <b>img.src = fileEntry.toURL();</b>
+      meta.appendChild(img);
+      break;   
+...   
+
+window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL
+    || window.webkitResolveLocalFileSystemURL;
+...   
+<b>window.resolveLocalFileSystemURL(fileSystemPath + path,
+      function(dirEntry)</b> {
+        var dirReader = dirEntry.createReader();
+        var dirs = [];
+        dirReader.readEntries(function(dirs) {
+          //TODO
+        }, errorHandler);
+      }, errorHandler);
+...
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="fill nobackground" style="background-image: url(images/sky.jpg)">
+    <div class="flexbox vcenter">
+      <h2 class="white centered"><a href="http://samples-of-html5.appspot.com/explorer.html"> Demo</a></h2>
+      <img class="centered" src="images/HTML5_Offline_Storage_128"/>
+    </div>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>Indexed DB</h2>
+      <h3><a href="http://www.w3.org/TR/IndexedDB/">Espesificación</a></h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:0px;">
+      <p>IndexedDB es un API para almacenamiento de cantidades significantes de iformación estructurada en el cliente. Tiene una gran eficiencia debido a que hace uso de indices para traer la información.
+    </article>
+    <table>
+        <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBFactory</td><td style="padding: 5px 0.5em; font-size:12px">Provee acceso a la Base de Datos</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBCursor</td><td style="padding: 5px 0.5em; font-size:12px">Permite la iteración sobre los objetos guardados e Indices</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBDatabase</td><td style="padding: 5px 0.5em; font-size:12px">Representa una conección a la Base de Datos</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBEnvironment</td><td style="padding: 5px 0.5em; font-size:12px">Provee acceso a la base de datos, window implementa esta interface.  </td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBIndex</td><td style="padding: 5px 0.5em; font-size:12px">Provee acceso asincrónico a los Indeces definidos. Éste es un objeto que guarda una referencia a otro objeto.</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBKeyRange</td><td style="padding: 5px 0.5em; font-size:12px">Permite la definición de un rago de claves</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBObjectStore</td><td style="padding: 5px 0.5em; font-size:12px">Representa un objeto de almacenamiento en la DB. Todos los registros en el ObjectStore son ordenados según sus claves.</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBOpenDBRequest</td><td style="padding: 5px 0.5em; font-size:12px">Representa el request de apertura de la DB</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBRequest </td><td style="padding: 5px 0.5em; font-size:12px">Provee acceso asincrónico a los resultados de los request realizados a la DB y a los object stores.</td>
+          </tr>
+           <tr>
+            <td style="padding: 10px 0.5em; font-size:12px">IDBTransaction</td><td style="padding: 5px 0.5em; font-size:12px">Representa una transacción, toda operación debe realizarce en un scope de transacción, esta transacción puede ser de lectura o escritura.</td>
+          </tr>
+        </table>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>Indexed DB</h2>
+      <h3>Abriendo la Base de Datos</h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:5px;">
+      <pre class="prettyprint" data-lang="javascript">
+window.version = "3";
+window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+window.db = null;
+
+//Abriendo la Base de datos, donde explicitamos la version
+var openDBRequest = window.indexedDB.open("myDatabase", window.version);
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>Indexed DB</h2>
+      <h3 class="blue">Apertura correcta de la DB</h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:5px;">
+      <pre class="prettyprint" data-lang="javascript" style="line-height: 15px;">
+    <b>openDBRequest.onsuccess = function(e)</b>{
+        try{
+            window.db = e.target.result;
+            //Si no esta creado es porque no se ejecuto el evento "onupgradeneeded"
+            if(!window.db.objectStoreNames.contains("person")){
+                <b>var versionRequest = window.db.setVersion(window.version);
+                versionRequest.onsuccess = function(e) {
+                    var objectStore = window.db.createObjectStore("person", {
+                        keyPath: "timeStamp"
+                    });
+                    objectStore.createIndex("name", "name", {
+                        unique: false
+                    });
+                    objectStore.createIndex("email", "email", {
+                        unique: true
+                    });
+                    e.target.transaction.oncomplete = function(e){
+                        console.log("ObjectStore create: Success");
+                        loadAllData();
+                    }
+                }</b>
+                versionRequest.onerror = function(e){
+                    console.log("Setting version: Error");
+                }
+            }else{ 
+                loadAllData();
+            }
+        }catch(e){
+            console.log(e);
+        }
+    }
+      </pre>
+    </article>
+  </slide>
+
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>Indexed DB</h2>
+      <h3 class="blue">Creando la Estructura</h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:5px;">
+      <pre class="prettyprint" data-lang="javascript">
+<b>openDBRequest.onupgradeneeded = function(e)</b>{
+    window.db = e.target.result;
+    //Creamos la Persona
+    if(!window.db.objectStoreNames.contains("person")) {
+        var objectStore = window.db.createObjectStore("person", {
+            keyPath: "timeStamp"
+        });
+        objectStore.createIndex("name", "name", {
+            unique: false
+        });
+        objectStore.createIndex("email", "email", {
+            unique: true
+        });
+        console.log("ObjectStore create: Success");
+    }
+}
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>Indexed DB</h2>
+      <h3 class="blue">Obteniedo información</h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:5px;">
+      <pre class="prettyprint" data-lang="javascript">
+var tran = window.db.transaction(["person"], "readonly");
+var obj = tran.objectStore("person");
+
+var cursorRequest = obj.openCursor();
+cursorRequest.onsuccess = function(e){
+  var cursor = e.target.result;
+  if(cursor == false)
+    return;
+  addRow(cursor.value); //Funcion de usuario para manejo gráfico
+  cursor.continue();
+};
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>Indexed DB</h2>
+      <h3 class="blue">Insertando información</h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:5px;">
+      <pre class="prettyprint" data-lang="javascript" style="line-height: 15px;">
+var transaction = window.db.transaction(["person"], <b>"readwrite"</b>);
+
+var person = transaction.objectStore("person");
+var obj = requestValues(); //Funcion del usuario
+var request = person.add({
+  "timeStamp":obj.timeStamp,
+  "name" : obj.name, 
+  "email" : obj.email
+});
+
+request.onsuccess = function(e){
+  console.log("Request is complete: Success ");
+}
+
+request.onerror = function(e){
+  console.log("Request is complete: Error ");
+}
+
+transaction.oncomplete = function(e) {
+  addRow(obj);
+};
+
+transaction.onerror = function(e){
+  console.log(e);
+  console.log("Transaction is complete: Error");
+}
+      </pre>
+    </article>
+  </slide>
+
+<slide class="nobackground">
+    <hgroup>
+      <h2>Indexed DB</h2>
+      <h3 class="blue">Borrando información</h3>
+    </hgroup>
+    <article class="smaller" style="margin-top:5px;">
+      <pre class="prettyprint" data-lang="javascript" style="line-height: 15px;">
+var trxDelete = window.db.transaction(["person"], "readwrite");
+var person = trxDelete.objectStore("person");
+
+<b>var requestDelete = person.delete(id);</b>
+requestDelete.onsuccess = function(e){
+  //TODO
+}
+
+requestDelete.onerror = function(e){
+  console.log("Error in requestDelete");
+}
+
+trxDelete.oncomplete = function(e){
+  console.log("Transaction is complete: Success");
+  var trxDelete = window.db.transaction(["person"], "readonly");
+  var person = trxDelete.objectStore("person");
+  <b>var countRequest = person.count();
+    countRequest.onsuccess = function(e){
+    var result = e.target.result;
+    console.log(result + "deleted");</b>
   }
 }
-</pre>
-<pre class="prettyprint" data-lang="css">
-&lt;style&gt;
-  p { color: pink }
-  b { color: blue }
-&lt;/style&gt;
-</pre>
-<pre class="prettyprint" data-lang="html">
-&lt;!DOCTYPE html>
-&lt;html>
-&lt;head>
-  &lt;title>My Awesome Page&lt;/title>
-&lt;/head>
-&lt;body>
-  &lt;p&gt;Hello world&lt;/p&gt;
-&lt;body>
-&lt;/html>
-</pre>
-    </article>
-  </slide>
-
-  <slide>
-    <aside class="note">
-      <section>
-        <ul>
-          <li>Point I wanted to make #1</li>
-          <li>Point I wanted to make #2</li>
-          <li>Point I wanted to make #3</li>
-          <li>Example <a href="#">link</a> in notes.</li>
-        </ul>
-        <p><b>Remember to say this tag line!</b></p>
-      </section>
-    </aside>
-    <hgroup>
-      <h2>Slide with Speaker Notes</h2>
-    </hgroup>
-    <article>
-      <p>Press 'p' to toggle speaker notes.</p>
-    </article>
-  </slide>
-
-  <slide>
-    <aside class="note">
-      <section>
-        <ul>
-          <li>See this amazing link: <a href="http://www.google.com">link</a>.</li>
-        </ul>
-        <p><b>Remember to say this tag line!</b></p>
-      </section>
-    </aside>
-    <hgroup>
-      <h2>Presenter Mode</h2>
-    </hgroup>
-    <article>
-      <p>Add <code><a href="?presentme=true" target="_self">?presentme=true</a></code> to the URL to enabled presenter mode.
-      This setting is sticky, meaning refreshing the page will persist presenter
-      mode.</p>
-      <p>Hit <code><a href="?presentme=false" target="_self">?presentme=false</a></code> to disable presenter mode.</p>
-    </article>
-  </slide>
-
-  <slide>
-    <hgroup>
-      <h2>Slide with Image</h2>
-    </hgroup>
-    <article>
-      <img src="images/chart.png" class="reflect" alt="Description" title="Description">
-      <footer class="source">source: place source info here</footer>
-    </article>
-  </slide>
-
-  <slide>
-    <hgroup>
-      <h2>Slide with Image (Centered horz/vert)</h2>
-    </hgroup>
-    <article class="flexbox vcenter">
-      <img src="images/barchart.png" alt="Description" title="Description">
-      <footer class="source">source: place source info here</footer>
-    </article>
-  </slide>
-
-  <slide>
-    <hgroup>
-      <h2>Table Option A</h2>
-      <h3>Subtitle Placeholder</h3>
-    </hgroup>
-    <article>
-      <table>
-        <tr>
-          <th></th><th>Column 1</th><th>Column 2</th><th>Column 3</th><th>Column 4</th>
-        </tr>
-        <tr>
-          <td>Row 1</td><td>placeholder</td><td class="highlight">placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <td>Row 2</td><td>placeholder</td><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <td>Row 3</td><td>placeholder</td><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <td>Row 4</td><td>placeholder</td><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <td>Row 5</td><td>placeholder</td><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-      </table>
-    </article>
-  </slide>
-
-  <slide>
-    <hgroup>
-      <h2>Table Option A (Smaller Text)</h2>
-      <h3>Subtitle Placeholder</h3>
-    </hgroup>
-    <article class="smaller">
-      <table>
-        <tr>
-          <th></th><th>Column 1</th><th>Column 2</th><th>Column 3</th><th>Column 4</th>
-        </tr>
-        <tr>
-          <td>Row 1</td><td>placeholder</td><td class="highlight">placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <td>Row 2</td><td>placeholder</td><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <td>Row 3</td><td>placeholder</td><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <td>Row 4</td><td>placeholder</td><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <td>Row 5</td><td>placeholder</td><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-      </table>
-    </article>
-  </slide>
-
-  <slide>
-    <hgroup>
-      <h2>Table Option B sdasdasd</h2>
-      <h3>Subtitle Placeholder</h3>
-    </hgroup>
-    <article>
-      <table class="rows">
-        <tr>
-          <th>Header 1</th><td>placeholder</td><td class="highlight">placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <th>Header 2</th><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <th>Header 3</th><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <th>Header 4</th><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-        <tr>
-          <th>Header 5</th><td>placeholder</td><td>placeholder</td><td>placeholder</td>
-        </tr>
-      </table>
-    </article>
-  </slide>
-
-  <slide>
-    <hgroup>
-      <h2>Slide Styles HOLA</h2>
-    </hgroup>
-    <article class="smaller">
-      <div class="columns-2">
-        <ul>
-          <li class="red">class="red"</li>
-          <li class="red2">class="red2"</li>
-          <li class="red3">class="red3"</li>
-          <li class="blue">class="blue"</li>
-          <li class="blue2">class="blue2"</li>
-          <li class="blue3">class="blue3"</li>
-          <li class="green">class="green"</li>
-          <li class="green2">class="green2"</li>
-        </ul>
-        <ul>
-          <li class="green3">class="green3"</li>
-          <li class="yellow">class="yellow"</li>
-          <li class="yellow2">class="yellow2"</li>
-          <li class="yellow3">class="yellow3"</li>
-          <li class="gray">class="gray"</li>
-          <li class="gray2">class="gray2"</li>
-          <li class="gray3">class="gray3"</li>
-          <li class="gray4">class="gray4"</li>
-        </ul>
-      </div>
-      <div class="centered" style="margin-top:2em">
-        I am centered text with a <button>Button</button> and <button disabled>Disabled</button> button.
-      </div>
+      </pre>
     </article>
   </slide>
 
   <slide class="segue dark nobackground">
     <aside class="gdbar"><img src="images/google_developers_icon_128.png"></aside>
     <hgroup class="auto-fadein">
-      <h2>Segue Slide</h2>
-      <h3>Subtitle Placeholder</h3>
+      <h2>IDLs</h2>
     </hgroup>
   </slide>
 
-  <slide class="fill nobackground" style="background-image: url(images/sky.jpg)">
+  <slide class="nobackground">
     <hgroup>
-      <h2 class="white">Full Image (with Optional Header)</h2>
+      <h2>¿Qué es una IDL?</h2>
     </hgroup>
-    <footer class="source white">www.flickr.com/photos/25797459@N06/5438799763/</footer>
+    <article class="smaller">
+      <p>Web IDLs se utilizan para describir interfaces en una plataforma Web</p>
+      <pre class="prettyprint" data-lang="javascript" style="line-height: 15px;">
+exception GraphicsException {
+  DOMString reason;
+};
+
+interface Paint { };
+
+interface SolidColor : Paint {
+  attribute float red;
+  attribute float green;
+  attribute float blue;
+};
+
+interface Pattern : Paint {
+  attribute DOMString imageURL;
+};
+
+[Constructor]
+interface GraphicalWindow {
+  readonly attribute unsigned long width;
+  readonly attribute unsigned long height;
+
+  attribute Paint currentPaint;
+
+  void drawRectangle(float x, float y, float width, float height);
+
+  void drawText(float x, float y, DOMString text);
+};
+      </pre>
+    </article>
   </slide>
 
-  <slide class="segue dark quote nobackground">
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/google_developers_icon_128.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Elemental<h2><br>
+      <h4 class="blue"><a href="https://developers.google.com/web-toolkit/articles/elemental">Google Web Toolkit</a></h4>
+    </hgroup>
+    <article class="smaller white" style="margin-left:350px">
+      <p><b><a href="https://developers.google.com/web-toolkit/articles/elemental">Elemental</a></b> es una nueva librería de GWT, rápida y libiana, la cual implementa las IDLs definidas por las especificaciones. </p>
+      <p>Ideal para el desarrollo de aplicaciones móviles y aplicaciones web.<p><br>
+      <p><b>Elemental</b> incluye todas las características de HTML5:</p>
+      <ul>
+        <li>DOM access</li>
+        <li>WebGL</li>
+        <li>WebAudio</li>
+        <li>WebSockets</li>
+        <li>WebRTC</li>
+        <li>File API</li>
+        <li>FileSystem API</li>
+        <li>IndexedDB API</li>
+        <li>y más ...</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>Y el Código??</h2>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="java" style="line-height: 15px;">
+Console console;
+Window window;
+Document doc;
+
+public LocalStorage() {
+  window = Browser.getWindow();
+  doc = window.getDocument();
+  console = window.getConsole();
+}
+
+@Override
+public void onModuleLoad() {
+  <b>window.webkitRequestFileSystem(Window.TEMPORARY, 1024 * 1024, new FileSystemCallback()</b> {
+    @Override
+    public boolean onFileSystemCallback(DOMFileSystem fileSystem) {
+      fs = fileSystem;
+      loadFs();
+      return true;
+    }
+  }, errorCallback );
+}
+      </pre>
+      <pre class="prettyprint" data-lang="javascript">
+<b>window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(filesystem)</b> {
+  fs = filesystem;
+  loadFs();
+}, errorHandler);
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/google_developers_icon_128.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Google Dart<h2><br>
+    </hgroup>
+    <article class="smaller white" style="margin-left:350px">
+      <p><b><a href="http://www.dartlang.org/">Google Dart</a></b> Es un nuevo lenguajes para la Web, basado en clases, con tipado estático opcional, orientado a objetos, closures, etc. Google Dart, le ayudará a construir estructuradas y modernas aplicaciones web.</p>
+    </article>
+  </slide>
+
+  <slide class="nobackground">
+    <hgroup>
+      <h2>Y el Código??</h2>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="dart" style="line-height: 15px;">
+#import ('dart:html', prefix: 'html');
+
+void initFileSystem(){
+  <b>html.window.webkitStorageInfo.requestQuota(html.Window.PERSISTENT, 5*1024*1024, (grantedBytes)</b> {
+    <b>html.window.webkitRequestFileSystem(html.Window.PERSISTENT, grantedBytes, (html.DOMFileSystem filesystem)</b>{
+      fs = filesystem;
+      actualDirectory = fs.root;
+      html.window.console.log(fs);
+      loadFileSystem();
+    }, (e) => errorHandler(e));
+  }, (e) => errorHandler(e));
+}
+      </pre>
+      <pre class="prettyprint" data-lang="javascript" style="line-height: 15px;">
+<b>window.webkitStorageInfo.requestQuota(PERSISTENT, 15 * 1024 * 1024, function(grantedBytes)</b> {
+  <b>window.requestFileSystem(PERSISTENT, grantedBytes, function(filesystem)</b> {
+    fs = filesystem;
+    actualDirectory = fs.root;
+    loadFs();
+  }, errorHandler);
+}, errorHandler);
+      </pre>
+    </article>
+  </slide>
+
+  <!--slide class="segue dark quote nobackground">
     <aside class="gdbar right bottom"><img src="images/google_developers_icon_128.png"></aside>
     <article class="flexbox vleft auto-fadein">
       <q>
@@ -588,37 +1082,21 @@ function helloWorld(world) {
         Company
       </div>
     </article>
-  </slide>
-
-  <slide>
-    <hgroup>
-      <h2>Slide with Iframe</h2>
-    </hgroup>
-    <article>
-      <iframe data-src="http://www.google.com/doodle4google/history.html"></iframe>
-    </article>
-  </slide>
-
-  <slide>
-    <article>
-      <iframe data-src="http://www.google.com/doodle4google/history.html"></iframe>
-    </article>
-  </slide>
+  </slide-->
 
   <slide class="thank-you-slide segue nobackground">
     <aside class="gdbar right"><img src="images/google_developers_icon_128.png"></aside>
     <article class="flexbox vleft auto-fadein">
-      <h2>&lt;Thank You!&gt;</h2>
-      <p>Important contact information goes here.</p>
+      <h2>&lt;Muchas Gracias!!!&gt;</h2>
     </article>
-    <p class="auto-fadein" data-config-contact>
+    <p class="auto-fadein" style="margin-top:15px;" data-config-contact >
       <!-- populated from slide_config.json -->
     </p>
   </slide>
 
   <slide class="logoslide dark nobackground">
     <article class="flexbox vcenter">
-      <span><img src="images/google_developers_logo_white.png"></span>
+      <span><img src="images/logo_devfest.png"></span>
     </article>
   </slide>
 

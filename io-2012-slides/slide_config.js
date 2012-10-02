@@ -24,13 +24,6 @@ var SLIDE_CONFIG = {
     twitter: '@csrinaldi',
     www: 'http://www.logikas.com',
     github: 'http://github.com/you'
-  }, {
-    name: 'Andres Testi',
-    company: 'Job Title, Google',
-    gplus: 'http://plus.google.com/1234567890',
-    twitter: '@yourhandle',
-    www: 'http://www.you.com',
-    github: 'http://github.com/you'
   }]
 };
 
