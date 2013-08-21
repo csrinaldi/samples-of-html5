@@ -1,0 +1,15 @@
+<polymer-element name="wf-terminal">
+    <template>
+        <span>I'm <b>wf-terminal</b>. This is my Shadow DOM.</span>
+    </template>
+    <script>
+        Polymer('wf-terminal', {
+            create: function(){
+                console.log("Component created");
+            },
+            status: function(){
+                console.log("This is my Status ");
+            }
+        });
+    </script>
+</polymer-element>

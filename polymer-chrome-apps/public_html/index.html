@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- 1. Load Polymer -->
+        <script src="libs/polymer/polymer-build/polymer.min.js"></script>
+        <!-- 2. Load a component -->
+        <link rel="import" href="components/terminal-component.html">
+    </head>
+    <body>
+        <div>Polymer Chrome App!!!</div>
+    <wf-terminal></wf-terminal>
+</body>
+<script>
+    window.addEventListener('WebComponentsReady', function() {
+        document.body.style.opacity = 1; // show body now that registration is done.
+
+        var wfTerminal = document.querySelector('wf-terminal');
+        wfTerminal.status();
+    });
+
+</script>
+</html>
