@@ -1,15 +1,44 @@
 <polymer-element name="wf-terminal">
     <template>
-        <span>I'm <b>wf-terminal</b>. This is my Shadow DOM.</span>
+        <output></output>
+        <div id ="cmdLine" class="input-line">
+            <div class="prompt">$&gt;</div>
+            <div>
+                <input class="cmdline" autofocus />
+            </div>
+        </div>
     </template>
     <script>
+
+        /*var cmdLine_ = container_.querySelector('#input-line .cmdline');
+         var output_ = container_.querySelector('output');
+         var interlace_ = document.querySelector('.interlace');*/
+
         Polymer('wf-terminal', {
-            create: function(){
-                console.log("Component created");
+            cmdLine_: this.$.cmdLine,
+            created: function() {
+                cmdLine_.addEventListener('click', inputTextClick_, false);
+                cmdLine_.addEventListener('keydown', processNewCommand_, false);
             },
-            status: function(){
-                console.log("This is my Status ");
+            status: function() {
+                console.log(this.$.cmdLine);
+            },
+            inputTextClick_: function() {
+                this.value = value;
+            },
+            processNewCommand_: function(e) {
+                if (e.keyCode == 9) { // Tab
+                    e.preventDefault();
+                    // TODO(ericbidelman): Implement tab suggest.
+                } else if (e.keyCode == 13) { // enter
+                    // Save shell history.
+                    if (this.value) {
+                        history_[history_.length] = this.value;
+                        histpos_ = history_.length;
+                    }
+                }
             }
+
         });
     </script>
 </polymer-element>

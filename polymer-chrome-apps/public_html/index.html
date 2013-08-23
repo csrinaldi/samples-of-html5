@@ -10,14 +10,15 @@
     <body>
         <div>Polymer Chrome App!!!</div>
     <wf-terminal></wf-terminal>
-</body>
-<script>
-    window.addEventListener('WebComponentsReady', function() {
-        document.body.style.opacity = 1; // show body now that registration is done.
+    <body>
+        <script>
+            window.addEventListener('WebComponentsReady', function() {
+                document.body.style.opacity = 1; // show body now that registration is done.
 
-        var wfTerminal = document.querySelector('wf-terminal');
-        wfTerminal.status();
-    });
+                var wfTerminal = document.querySelector('wf-terminal');
+                wfTerminal.status();
+            });
 
-</script>
+        </script>
+    </body>
 </html>
