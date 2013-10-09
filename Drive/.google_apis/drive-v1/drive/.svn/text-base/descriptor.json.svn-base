@@ -1,0 +1,451 @@
+{
+  "discoveryLink": "./apis/drive/v1/rest", 
+  "kind": "discovery#directoryItem", 
+  "description": "The API to interact with Drive", 
+  "title": "Drive API", 
+  "discoveryRestUrl": "https://www.googleapis.com/discovery/v1/apis/drive/v1/rest", 
+  "preferred": true, 
+  "version": "v1", 
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif", 
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  }, 
+  "documentationLink": "https://developers.google.com/drive/", 
+  "id": "drive:v1", 
+  "name": "drive", 
+  "files": [
+    {
+      "path": "google-api-drive-v1-rev4-java-1.5.1-beta.jar", 
+      "type": "todo"
+    }, 
+    {
+      "path": "google-api-drive-v1-rev4-java-1.5.1-beta-javadoc.jar", 
+      "type": "todo"
+    }, 
+    {
+      "path": "google-api-drive-v1-rev4-java-1.5.1-beta-sources.jar", 
+      "type": "todo"
+    }
+  ], 
+  "revision": 4, 
+  "language": "java", 
+  "language_version": "1.5.1-beta", 
+  "dependencies": [
+    {
+      "files": [
+        {
+          "downloadUrl": "http://google-api-java-client.googlecode.com/files/google-api-java-client-1.8.0-beta.zip", 
+          "type": "bundle"
+        }
+      ], 
+      "version": "1.8.0-beta", 
+      "name": "Google API Java Client Bundle", 
+      "environments": [
+        "manual"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-api-client-1.8.0-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-api-client-1.8.0-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.0-beta", 
+      "name": "Google APIs Client Library", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-api-client-android2-1.8.0-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-api-client-android2-1.8.0-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.0-beta", 
+      "name": "Android SDK 2.1 platform extensions to the Google APIs Client Library", 
+      "environments": [
+        "android2", 
+        "android3"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-api-client-appengine-1.8.0-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-api-client-appengine-1.8.0-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.0-beta", 
+      "name": "Google App Engine extensions to the Google APIs Client Library", 
+      "environments": [
+        "appengine"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-api-client-servlet-1.8.0-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-api-client-servlet-1.8.0-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.0-beta", 
+      "name": "Servlet and JDO extensions to the Google APIs Client Library", 
+      "environments": [
+        "servlet", 
+        "appengine"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-oauth-client-1.8.0-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-oauth-client-1.8.0-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.0-beta", 
+      "name": "Google OAuth Client Library", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-oauth-client-appengine-1.8.0-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-oauth-client-appengine-1.8.0-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.0-beta", 
+      "name": "Google App Engine extensions to the Google OAuth Client Library", 
+      "environments": [
+        "appengine"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-oauth-client-servlet-1.8.0-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-oauth-client-servlet-1.8.0-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.0-beta", 
+      "name": "Servlet and JDO extensions to the Google OAuth Client Library", 
+      "environments": [
+        "appengine", 
+        "servlet"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-http-client-1.8.3-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-http-client-1.8.3-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.3-beta", 
+      "name": "Google HTTP Client Library", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-http-client-android2-1.8.3-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-http-client-android2-1.8.3-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.3-beta", 
+      "name": "Android SDK 2.1 platform extensions to the Google HTTP Client Library", 
+      "environments": [
+        "android2", 
+        "android3"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-http-client-android3-1.8.3-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-http-client-android3-1.8.3-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.3-beta", 
+      "name": "Android SDK 3.0 platform extensions to the Google HTTP Client Library", 
+      "environments": [
+        "android3"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/google-http-client-appengine-1.8.3-beta.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/google-http-client-appengine-1.8.3-beta-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.8.3-beta", 
+      "name": "Google App Engine extensions to the Google HTTP Client Library", 
+      "environments": [
+        "appengine"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/commons-logging-1.1.1.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/commons-logging-1.1.1-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.1.1", 
+      "name": "Commons Logging", 
+      "environments": [
+        "appengine", 
+        "servlet", 
+        "generic"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/guava-11.0.1.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/guava-11.0.1-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "11.0.1", 
+      "name": "Google Guava", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/gson-2.1.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/gson-2.1-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "2.1", 
+      "name": "GSON", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/httpclient-4.0.3.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/httpclient-4.0.3-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "4.0.3", 
+      "name": "HTTP Client", 
+      "environments": [
+        "appengine", 
+        "servlet", 
+        "generic"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/httpcore-4.0.1.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/httpcore-4.0.1-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "4.0.1", 
+      "name": "HTTP Core", 
+      "environments": [
+        "appengine", 
+        "servlet", 
+        "generic"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/jackson-core-asl-1.9.4.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/jackson-core-asl-1.9.4-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.9.4", 
+      "name": "Jackson Core ASL", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/jdo2-api-2.3-eb.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/jdo2-api-2.3-eb-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "2.3-eb", 
+      "name": "JDO2 API", 
+      "environments": [
+        "appengine", 
+        "servlet"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/jsr305-1.3.9.jar", 
+          "type": "binary"
+        }
+      ], 
+      "version": "1.3.9", 
+      "name": "JSR 305", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/junit-4.8.2.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/junit-4.8.2-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "4.8.2", 
+      "name": "JUnit", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/protobuf-java-2.2.0.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/protobuf-java-2.2.0-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "2.2.0", 
+      "name": "Protobuf", 
+      "environments": [
+        "*"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/transaction-api-1.1.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/transaction-api-1.1-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.1", 
+      "name": "Transaction API", 
+      "environments": [
+        "appengine", 
+        "servlet"
+      ]
+    }, 
+    {
+      "files": [
+        {
+          "path": "dependencies/xpp3-1.1.4c.jar", 
+          "type": "binary"
+        }, 
+        {
+          "path": "dependencies/xpp3-1.1.4c-sources.jar", 
+          "type": "source"
+        }
+      ], 
+      "version": "1.1.4c", 
+      "name": "XPP3", 
+      "environments": [
+        "*"
+      ]
+    }
+  ], 
+  "icon_files": {
+    "x32": "icons/search-32.gif", 
+    "x16": "icons/search-16.gif"
+  }
+}

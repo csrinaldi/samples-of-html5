@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/7/trunk/Drive/.google_apis/drive-v1/drive/dependencies/css
+END
+print.css
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/7/trunk/Drive/.google_apis/drive-v1/drive/dependencies/css/print.css
+END
+maven-base.css
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/7/trunk/Drive/.google_apis/drive-v1/drive/dependencies/css/maven-base.css
+END
+site.css
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/7/trunk/Drive/.google_apis/drive-v1/drive/dependencies/css/site.css
+END
+maven-theme.css
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/7/trunk/Drive/.google_apis/drive-v1/drive/dependencies/css/maven-theme.css
+END

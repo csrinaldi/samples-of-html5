@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/lib/dependencies/css
+END
+print.css
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/lib/dependencies/css/print.css
+END
+maven-base.css
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/lib/dependencies/css/maven-base.css
+END
+site.css
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/lib/dependencies/css/site.css
+END
+maven-theme.css
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/lib/dependencies/css/maven-theme.css
+END

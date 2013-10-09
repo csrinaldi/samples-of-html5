@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- The HTML 4.01 Transitional DOCTYPE declaration-->
+<!-- above set at the top of the file will set     -->
+<!-- the browser's rendering engine into           -->
+<!-- "Quirks Mode". Replacing this declaration     -->
+<!-- with a "Standards Mode" doctype is supported, -->
+<!-- but may lead to some differences in layout.   -->
+
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Hello App Engine</title>
+</head>
+
+<body>
+	<h1>Hello ADTGs !!!!</h1>
+
+	<table>
+		<tr>
+			<td>HangoutDemo</td>
+			<td><a href="https://plus.google.com/hangouts/_?gid=958819313087"
+				style="text-decoration: none;"> <img
+					src="https://ssl.gstatic.com/s2/oz/images/stars/hangout/1/gplus-hangout-20x86-normal.png"
+					alt="Start a Hangout" style="border: 0; width: 86px; height: 20px;" />
+			</a></td>
+		</tr>
+	</table>
+</body>
+</html>

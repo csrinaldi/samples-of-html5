@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF
+END
+appengine-web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/appengine-web.xml
+END
+logging.properties
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/logging.properties
+END
+client_secrets.json.example
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/client_secrets.json.example
+END
+web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/web.xml
+END
+client_secrets.json
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/7/trunk/Drive/war/WEB-INF/client_secrets.json
+END

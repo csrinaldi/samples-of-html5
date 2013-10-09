@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/18/trunk/hangout_demo/.settings
+END
+org.eclipse.jdt.core.prefs
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/11/trunk/hangout_demo/.settings/org.eclipse.jdt.core.prefs
+END
+com.google.appengine.eclipse.core.prefs
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/18/trunk/hangout_demo/.settings/com.google.appengine.eclipse.core.prefs
+END
+org.eclipse.wst.common.project.facet.core.xml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/11/trunk/hangout_demo/.settings/org.eclipse.wst.common.project.facet.core.xml
+END
+com.google.gdt.eclipse.core.prefs
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/11/trunk/hangout_demo/.settings/com.google.gdt.eclipse.core.prefs
+END

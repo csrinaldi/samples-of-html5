@@ -1,0 +1,14 @@
+{
+    "name" : "Hangout Demo"
+    "version" : "1.0",
+    "description" : "Hangout API Demo",
+    "api_console_project_id" : "958819313087",
+    "icons": {
+      "128": "eduka.png"
+    },
+    "app" : {
+      "launch" : {
+      "web_url" : "http://virtual-education.appspot.com/"
+      }
+    }
+  }
