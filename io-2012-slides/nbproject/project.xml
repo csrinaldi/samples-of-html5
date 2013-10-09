@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://www.netbeans.org/ns/project/1">
-    <type>org.netbeans.modules.java.j2seproject</type>
+    <type>org.netbeans.modules.web.clientproject</type>
     <configuration>
-        <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>Slices-presentation</name>
-            <source-roots>
-                <root id="src.dir"/>
-                <root id="js.dir"/>
-                <root id="scripts.dir"/>
-                <root id="theme.dir"/>
-            </source-roots>
-            <test-roots/>
+        <data xmlns="http://www.netbeans.org/ns/clientside-project/1">
+            <name>io-2012-slides</name>
         </data>
     </configuration>
 </project>

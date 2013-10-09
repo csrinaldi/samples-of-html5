@@ -1,8 +1,12 @@
 var SLIDE_CONFIG = {
   // Slide settings
   settings: {
-    title: 'Evolución del desarrollo Web',
-    subtitle: 'HTML 5, Elemental (GWT), Google Dart',
+    title: 'HTML 5 && Google Chrome',
+    subtitle: '',
+    eventInfo: {
+      title: 'DevFest Santa Fe',
+      date: '10/10/2013'
+    },
     useBuilds: true, // Default: true. False will turn off slide animation builds.
     usePrettify: true, // Default: true
     enableSlideAreas: true, // Default: true. False turns off the click areas on either slide of the slides.
@@ -11,7 +15,7 @@ var SLIDE_CONFIG = {
     favIcon: 'images/google_developers_logo_tiny.png',
     fonts: [
       'Open Sans:regular,semibold,italic,italicsemibold',
-      'Inconsolata'
+      'Source Code Pro'
     ],
     //theme: ['mytheme'], // Add your own custom themes or styles in /theme/css. Leave off the .css extension.
   },
@@ -19,11 +23,18 @@ var SLIDE_CONFIG = {
   // Author information
   presenters: [{
     name: 'Cristian Rinaldi',
-    company: 'Co-Founder Logikas',
-    gplus: 'http://goo.gl/ePZ4u',
+    company: 'Logikas',
+    gplus: 'https://plus.google.com/108221888675664107719',
     twitter: '@csrinaldi',
-    www: 'http://www.logikas.com',
+    www: 'http://www.you.com',
+    github: 'http://github.com/csrinaldi'
+  }/*, {
+    name: 'Second Name',
+    company: 'Job Title, Google',
+    gplus: 'http://plus.google.com/1234567890',
+    twitter: '@yourhandle',
+    www: 'http://www.you.com',
     github: 'http://github.com/you'
-  }]
+  }*/]
 };
 

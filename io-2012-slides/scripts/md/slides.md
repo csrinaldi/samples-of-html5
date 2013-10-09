@@ -1,14 +1,22 @@
 title: Slide Title
+subtitle: Subtitle
 class: image
 
 ![Mobile vs desktop users](image.png)
 
 ---
 
+title: Segue Slide
+subtitle: Subtitle
+class: segue dark nobackground
+
+---
+
 title: Agenda
 class: big
+build_lists: true
 
-Things we'll cover:
+Things we'll cover (list should build):
 
 - Bullet1
 - Bullet2
@@ -25,7 +33,7 @@ class: nobackground fill
 
 ---
 
-h1: Big Title Slide
+title: Big Title Slide
 class: title-slide
 
 ---
@@ -62,3 +70,9 @@ function detectFormFactor() {
 }
 </pre>
 
+---
+
+title: Centered content
+content_class: flexbox vcenter
+
+This content should be centered!
