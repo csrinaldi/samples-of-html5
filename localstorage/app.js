@@ -75,18 +75,18 @@ function init(){
 function loadAllData(){
     console.log("Data Base open: Success");
     console.log("Load data: Running ...");
-    var tran = window.db.transaction(["person"], "readonly");
-    var obj = tran.objectStore("person");
+        var tran = window.db.transaction(["person"], "readonly");
+        var obj = tran.objectStore("person");
 
-    var cursorRequest = obj.openCursor();
-    cursorRequest.onsuccess = function(e){
-        var cursor = e.target.result;
-        if(cursor == false)
-            return;
-        addRow(cursor.value);
-        cursor.continue();
-    };
-    console.log("Load data: Success");
+        var cursorRequest = obj.openCursor();
+        cursorRequest.onsuccess = function(e){
+            var cursor = e.target.result;
+            if(cursor == false)
+                return;
+            addRow(cursor.value);
+            cursor.continue();
+        };
+        console.log("Load data: Success");
 }
 
 function handleClear(e){
