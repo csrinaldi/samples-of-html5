@@ -1,0 +1,23 @@
+{
+  "name": "knowledge-talent",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular": "1.2.6",
+    "json3": "~3.2.6",
+    "es5-shim": "~2.1.0",
+    "jquery": "~1.10.2",
+    "bootstrap": "~3.0.3",
+    "angular-resource": "1.2.6",
+    "angular-cookies": "1.2.6",
+    "angular-sanitize": "1.2.6",
+    "angular-route": "1.2.6",
+    "jquery.easing": "~1.3.0",
+    "jquery.cycle2": "https://raw.github.com/malsup/malsup.github.com/master/jquery.cycle2.js",
+    "jquery.flexslider": "https://github.com/woothemes/FlexSlider/blob/master/jquery.flexslider.js",
+    "flexslider": "https://github.com/woothemes/FlexSlider/blob/master/flexslider.css"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.2.6",
+    "angular-scenario": "1.2.6"
+  }
+}
