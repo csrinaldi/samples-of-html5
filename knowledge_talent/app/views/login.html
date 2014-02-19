@@ -1,4 +1,4 @@
-<div class="register">
+<div class="register" ng-controller="LoginController">
     <div class="row">
         <div class="col-md-6 col-sm-6">
             <h2>Register Today</h2>
@@ -13,19 +13,27 @@
                 <h5>Login to your Account</h5>
                 <div class="form">
                     <!-- Login form (not working)-->
-                    <form class="form-horizontal">
+                    <form class="form-horizontal" ng-submit="submit()">
                         <!-- Username -->
                         <div class="form-group">
                             <label class="control-label col-md-3" for="username">Username</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" id="username">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="username" 
+                                       placeholder="Your nickname"
+                                       ng-model="user.name" 
+                                       ng-minlength="5"
+                                       ng-maxlength="20"
+                                       ng-focus
+                                       required>
                             </div>
                         </div>
                         <!-- Password -->
                         <div class="form-group">
                             <label class="control-label col-md-3" for="email">Password</label>
                             <div class="col-md-9">
-                                <input type="password" class="form-control" id="password">
+                                <input type="password" class="form-control" id="password" ng-model="user.password" placeholder="Your password">
                             </div>
                         </div>
                         <div class="form-group">

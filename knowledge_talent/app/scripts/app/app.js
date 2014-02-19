@@ -5,13 +5,14 @@ var module = angular.module('knowledgeTalentApp', [
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    'knowledgeTalentApp.Controllers'
+    'knowledgeTalentApp.Controllers',
+    'knowledgeTalentApp.Services'
 ]);
 
 
-module.config(function($routeProvider, $rootScope) {
-    $rootScope.inLogin = false;
-    $rootScope.inRegister = false;
+module.config(function($routeProvider, $locationProvider) {
+    /*$rootScope.inLogin = false;
+     $rootScope.inRegister = false;*/
     $routeProvider
             .when('/', {
                 templateUrl: 'views/main.html',
@@ -37,15 +38,25 @@ module.config(function($routeProvider, $rootScope) {
                 templateUrl: 'views/companies',
                 controller: 'CompaniesController'
             })
+            .when('/register', {
+                templateUrl: 'views/comingsoon.html',
+                controller: 'ComingSoonController'
+            })
             .otherwise({
                 redirectTo: '/'
             });
+            
+            //$locationProvider.html5Mode(true);
 });
 
-module.run(['$location', '$rootScope', function($location, $rootScope) {
-    $rootScope.$on("$routeChangeStart", function(event, next, current) {
+module.run(['$location', '$rootScope', 'AuthService', function($location, $rootScope, authService) {
+        $rootScope.loguedIn = authService.isLoggedIn();
         
-    });
-}]);
+        $rootScope.$on("$routeChangeStart", function(event, next, current) {
+            console.log(next.$$route.originalPath);
+            $rootScope.inLogin = next.$$route.originalPath === "/login";
+            $rootScope.inRegister = next.$$route.originalPath === "/register";
+        });
+    }]);
 
 
