@@ -75,6 +75,7 @@ fileSystem.open($window.PERSISTENT, 5 * 1024 * 1024,
     function(error) {
       console.log(error);
     });
+```
 
 Create directory, and list
 
