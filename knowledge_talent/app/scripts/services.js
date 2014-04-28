@@ -3,7 +3,7 @@
 var module = angular.module('knowledgeTalentApp.Services', []);
 
 module.factory('AuthService', function($http) {
-
+    //TODO make a Google SignIn and Other provider
     return {
         isLoggedIn: function() {
             return false;
@@ -11,7 +11,7 @@ module.factory('AuthService', function($http) {
     };
 });
 
-module.service("Storage", function($q, $window, $rootScope) {
+module.service("Storage", function($q, $window) {
 
     var indexedDB = $window.indexedDB || $window.webkitIndexedDB || $window.mozIndexedDB;
 
@@ -125,7 +125,7 @@ module.service("Storage", function($q, $window, $rootScope) {
                 } catch (error) {
                     deferred.reject(error);
                 }
-            }else{
+            } else {
                 deferred.resolve(self);
             }
             return deferred.promise;
@@ -209,4 +209,130 @@ module.service("Storage", function($q, $window, $rootScope) {
     this.query = function() {
         return new QueryBuilder(this);
     };
+});
+
+
+module.service("FileSystem", function($q, $window, $location) {
+    
+    var directory = null;
+    var fs = null;
+    var type = null;
+    
+    this.open = function(type, bytes, callback) {
+        var self = this;
+        var deferred = $q.defer();
+        if (
+                angular.isDefined($window.navigator.webkitPersistentStorage) &&
+                angular.isDefined($window.webkitRequestFileSystem)) {
+
+            if (type === $window.PERSISTENT) {
+
+                $window.navigator.webkitPersistentStorage.requestQuota(bytes,
+                        function(grantedBytes) {
+                            $window.webkitRequestFileSystem(type, grantedBytes,
+                                    function(filesystem) {
+                                        self.fs = filesystem;
+                                        self.directory = self.fs.root;
+                                        self.fileSystemPath = "filesystem:http://"+$location.host()+"/persistent";
+                                        callback(self.fs);
+                                        
+                                        deferred.resolve(self);
+                                    },
+                                    function(error) {
+                                        deferred.reject(error);
+                                    });
+                        },
+                        function(error) {
+                            deferred.reject(error);
+                        });
+            } else if (type === $window.TEMPORARY) {
+                
+                $window.requestFileSystem($window.TEMPORARY, bytes, function(filesystem) {
+                    self.fs = filesystem;
+                    self.directory = self.fs.root;
+                    self.fileSystemPath = "filesystem:http://"+$location.host()+"/temporary";
+                    callback(self.fs);
+                    deferred.resolve(self);
+                }, function(error) {
+                    deferred.reject(error);
+                });
+                
+            } else {
+                deferred.reject();
+            }
+        }
+
+        return deferred.promise;
+    };
+
+    this.requestQuota = function(byte) {
+    };
+
+    this.createFile = function(directory) {
+        return;
+    };
+
+    //var fileSystemPath = "filesystem:http://samples-of-html5.appspot.com/persistent";
+    /**
+     * Create a new Directory in FileSystem
+     * @param {type} entry DirectoryEntry parent
+     * @param {type} name  
+     * @param {type} cd navigate to directory
+     * @returns {$q@call;defer.promise}
+     */
+    this.mkdir = function(entry, name, cd) {
+        var self = this;
+        cd = typeof cd !== 'undefined' ? cd : false;
+        var deferred = $q.defer();
+
+        if (entry.isDirectory) {
+            entry.getDirectory(name, {
+                create: true
+            }, function(entry) {
+                if (cd)
+                    self.directory = entry;
+                deferred.resolve(self);
+            }, function(error) {
+                deferred.reject(error);
+            });
+        }
+        return deferred.promise;
+
+    };
+
+    /**
+     * List content of actual directory
+     * @param {type} options
+     * @returns {Array}
+     */
+    this.ls = function(options) {
+        var deferred = $q.defer();
+        var self = this;
+        var toReturn = [];
+        if (self.directory) {
+            var dirReader = self.directory.createReader();
+            dirReader.readEntries(
+                    function(entries) {
+                        angular.forEach(entries, function(value, key) {
+                            toReturn.push(value);
+                        });
+                        deferred.resolve(toReturn);
+                    });
+        }
+        
+        return deferred.promise;
+    };
+
+    this.pwd = function() {
+        return this.directory;
+    };
+
+    this.cd = function(path) {
+        
+    };
+
+    this.rm = function(path, options) {
+
+    };
+
 });

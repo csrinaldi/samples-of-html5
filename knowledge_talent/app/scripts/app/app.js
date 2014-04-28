@@ -49,29 +49,35 @@ module.config(function($routeProvider, $locationProvider) {
     //$locationProvider.html5Mode(true);
 });
 
-module.run(['$location', '$rootScope', 'AuthService', 'Storage', function($location, $rootScope, authService, storage) {
+module.run(['$window', '$location', '$rootScope', 'AuthService', 'Storage', 'FileSystem', function($window, $location, $rootScope, authService, storage, fileSystem) {
 
-        /*storage.use("knowledge_talen", 2, function() {
-         }).then(
-         function(s) {
-         console.log(s.info());
-         s.insert({id: 1, name: "cristian"}).then(function(s) {
-         console.log(s.info);
-         }, function(error) {
-         console.log(error);
-         });
-         });*/
+        fileSystem.open($window.PERSISTENT, 5 * 1024 * 1024, function(fs) {
+            console.log(fs);
+        }).then(
+                function(fileSystem) {
+                    fileSystem.mkdir(fileSystem.pwd(), "dev", false)
+                            .then(function(fileSystem) {
+                                fileSystem.ls({}).then(function(result) {
+                                    console.log(result);
+                                }, function(e) {
+                                    console.log(e);
+                                });
+                            }, function(e) {
+                                console.log(e);
+                            });
+                },
+                function(error) {
+                    console.log(error);
+                });
 
-
-        storage.use("knowledge_talen", 3,
+        storage.use("knowledge_talen", 4,
                 function(db) {
                     /**
                      * Create database estructure
                      */
                     console.log(db);
-                    var store = db.createObjectStore("person", {keyPath: 'id', autoIncrement: true});
+                    var store = db.createObjectStore("expert", {keyPath: 'id', autoIncrement: true});
                     store.createIndex('name', 'name', {unique: false});
-                    store.createIndex('surname', 'surname', {unique: false});
                 })
                 .then(
                         function(storage) {
@@ -79,6 +85,15 @@ module.run(['$location', '$rootScope', 'AuthService', 'Storage', function($locat
                             storage.query().insert("person", {"name": "Cristian", "surname": "Rinaldi"})
                                     .then(
                                             function(builder) {
+                                                builder.insert("expert", {"name": "Expert"}).
+                                                        then(
+                                                                function(builder) {
+                                                                    console.log("Result OK");
+                                                                },
+                                                                function(error) {
+                                                                    console.log("Error");
+                                                                });
+
                                                 builder.count("person").then(
                                                         function(result) {
                                                             console.log("Result of Person " + result);
