@@ -61,7 +61,7 @@ storage.use("knowledge_talen", 3,
 5. Write File
 
 By Example:
-
+List current directory
 ```javascript
 fileSystem.open($window.PERSISTENT, 5 * 1024 * 1024, 
   function(fs) { //callback function
@@ -76,5 +76,53 @@ fileSystem.open($window.PERSISTENT, 5 * 1024 * 1024,
       console.log(error);
     });
 
+Create directory, and list
+
+```javascript
+fileSystem.open($window.PERSISTENT, 5 * 1024 * 1024, function(fs) {
+            console.log(fs);
+}).then(
+     function(fileSystem) {
+        fileSystem.mkdir(fileSystem.pwd(), "dev", false) //Create a directory but not cd to directory
+           .then(function(fileSystem) {
+              fileSystem.ls({}).then(function(result) {
+                console.log(result);
+              }, function(e) {
+                console.log(e);
+              });
+            }, function(e) {
+              console.log(e);
+        });
+    },
+      function(error) {
+        console.log(error);
+    });
+```
+
+Result of creation dev Directory and list
+[DirectoryEntry, DirectoryEntry, DirectoryEntry]
+0: DirectoryEntry
+filesystem: DOMFileSystem
+fullPath: "/dev"
+isDirectory: true
+isFile: false
+name: "dev"
+__proto__: DirectoryEntry
+1: DirectoryEntry
+filesystem: DOMFileSystem
+fullPath: "/Document2"
+isDirectory: true
+isFile: false
+name: "Document2"
+__proto__: DirectoryEntry
+2: DirectoryEntry
+filesystem: DOMFileSystem
+fullPath: "/Document"
+isDirectory: true
+isFile: false
+name: "Document"
+__proto__: DirectoryEntry
+length: 3
+__proto__: Array[0]
 
 
