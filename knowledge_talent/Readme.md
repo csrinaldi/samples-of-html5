@@ -53,10 +53,28 @@ storage.use("knowledge_talen", 3,
 
 ##FileSystem Service:
   This service allows you to interact with the local FileSystem.
+  
 1. Open FileSystem
 2. Create File
 3. Create Directory
 4. Read Directory
+5. Write File
+
+By Example:
+
+```javascript
+fileSystem.open($window.PERSISTENT, 5 * 1024 * 1024, 
+  function(fs) { //callback function
+    console.log(fs); 
+  }).then(
+    function(fileSystem) {
+      fileSystem.ls().then(function(result){ //list actual directory
+        console.log(result);
+      });
+    },
+    function(error) {
+      console.log(error);
+    });
 
 
 
