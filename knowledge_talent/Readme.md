@@ -7,10 +7,10 @@ In the project there are several services for Angular for community use.
 
 By Example:
 
-IndexedDB Service: This service managed the IndexedDB DataBase. The service allow:
-* Open a particular database with a particular version, and using a particular callback for upgrade the struture of DataBase.
-* This service use a Angular promise support.
-* This service allow insert data, and consulting this, across a QueryBuilder component.
+##IndexedDB Service:## This service managed the IndexedDB DataBase. The service allow:
+1. Open a particular database with a particular version, and using a particular callback for upgrade the struture of DataBase.
+2. This service use a Angular promise support.
+3. This service allow insert data, and consulting this, across a QueryBuilder component.
 
 ```javascript
 storage.use("knowledge_talen", 3,
@@ -47,5 +47,12 @@ storage.use("knowledge_talen", 3,
                     console.log(error);
                 });
 ```
+
+##FileSystem Service:## This service allows you to interact with the local FileSystem.
+1. Open FileSystem
+2. Create File
+3. Create Directory
+4. Read Directory
+
 
 
