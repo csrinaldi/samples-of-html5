@@ -1,0 +1,13 @@
+{
+  "name": "jquery.flexslider",
+  "_cacheHeaders": {
+    "ETag": "\"43c3e6cc60ac777e0c2930034f96bc46\"",
+    "Content-Length": "432240",
+    "Content-Type": "text/html; charset=utf-8"
+  },
+  "_release": "e-tag:43c3e6cc6",
+  "main": "index.js",
+  "_source": "https://github.com/woothemes/FlexSlider/blob/master/jquery.flexslider.js",
+  "_target": "*",
+  "_originalSource": "https://github.com/woothemes/FlexSlider/blob/master/jquery.flexslider.js"
+}
