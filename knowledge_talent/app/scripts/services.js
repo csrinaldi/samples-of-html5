@@ -265,10 +265,18 @@ module.service("FileSystem", function($q, $window, $location) {
         return deferred.promise;
     };
 
+    /**
+     * Request new size to FileSystem API
+     * @param {type} byte
+     * @returns {undefined}
+     */
     this.requestQuota = function(byte) {
+        //TODO
     };
 
-    this.createFile = function(directory) {
+    
+    this.createFile = function(directory, content) {
+        //TODO
         return;
     };
 
@@ -328,11 +336,11 @@ module.service("FileSystem", function($q, $window, $location) {
     };
 
     this.cd = function(path) {
-        
+        //TODO
     };
 
     this.rm = function(path, options) {
-
+        //TODO
     };
 
 });
