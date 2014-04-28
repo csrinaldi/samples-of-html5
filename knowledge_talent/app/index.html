@@ -40,22 +40,20 @@
         <header>
             <div class="container">
                 <div class="row">
-                    <div class="col-md-4 col-sm-4">
+                    <div class="col-md-6 col-sm-6">
                         <div class="logo">
                             <h1><a href="#">{{title}} of <span class="color">Talent</span></a></h1>
                             <div class="hmeta">The Social Network of the Knowledge</div>
                         </div>
                     </div>
-                    <div class="col-md-5 col-md-offset-3 col-sm-6 col-sm-offset-2">
-
-                        <form ng-show="{{!$root.loguedIn && !$root.inLogin && !$root.inRegister}}" class="form-inline" role="form">
+                    <div class="col-md-6 col-sm-6" ng-show="{{$root.showLogin}}">
+                        <form class="form-inline" role="form">
                             <!--div class="form-group">
                                 <input type="text" class="form-control" id="search" placeholder="Type Something...">
                             </div-->
                             <button ng-click="goPlace('/login')" class="btn btn-default">Sing In</button>
                             <button ng-click="goPlace('/register')" class="btn btn-default">Register</button>
                         </form>
-
                     </div>
                 </div>
             </div>

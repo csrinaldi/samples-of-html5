@@ -5,9 +5,7 @@
     <option name="workingDirectory" value="" />
   </component>
   <component name="IdProvider" IDEtalkID="BA7CF6FFE39B83A74BA69FBBB80D9394" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true">
-    <output url="file://$PROJECT_DIR$/out" />
-  </component>
+  <component name="ProjectRootManager" version="2" />
   <component name="masterDetails">
     <states>
       <state key="ProjectJDKs.UI">
