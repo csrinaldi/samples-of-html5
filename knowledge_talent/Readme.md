@@ -101,6 +101,7 @@ fileSystem.open($window.PERSISTENT, 5 * 1024 * 1024, function(fs) {
 ```
 
 Result of creation dev Directory and list
+```javascript
 [DirectoryEntry, DirectoryEntry, DirectoryEntry]
 0: DirectoryEntry
 filesystem: DOMFileSystem
@@ -125,5 +126,6 @@ name: "Document"
 __proto__: DirectoryEntry
 length: 3
 __proto__: Array[0]
+```
 
 
