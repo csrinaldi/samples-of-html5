@@ -113,7 +113,23 @@ module.run(['$window', '$location', '$rootScope', 'AuthService', 'Storage', 'Fil
                 });
 
         $rootScope.$on("$routeChangeStart", function(event, next, current) {
-            $rootScope.showLogin = (!authService.isLoggedIn() && !(next.$$route.originalPath === "/login") && !next.$$route.originalPath === "/register");
+
+            authService.googleService().config(
+                    {
+                        clientID: "669828437303.apps.googleusercontent.com",
+                        apiKey: "AIzaSyARWaMtarIjqPCTw8jgZ0rj9GgV2hAM9kY",
+                        scopes: [
+                            'https://www.googleapis.com/auth/plus.login',
+                            'https://www.googleapis.com/auth/plus.me',
+                            'https://www.googleapis.com/auth/userinfo.email',
+                            'https://www.googleapis.com/auth/userinfo.profile'
+                        ]
+                    }).then(function() {
+                        authService.googleService().login().then(function(auth){
+                            console.log(auth);
+                        });
+                    });
+            $rootScope.showLogin = (!authService.googleService().isLogged() && !(next.$$route.originalPath === "/login") && !next.$$route.originalPath === "/register");
         });
 
     }]);

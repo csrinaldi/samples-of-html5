@@ -1,11 +1,11 @@
 {
   "name": "flexslider",
   "_cacheHeaders": {
-    "ETag": "\"b6aea4c2e5ba50985fdca069f079a3ad\"",
-    "Content-Length": "71835",
+    "ETag": "\"12cacded60a98e03f2121e5016768430\"",
+    "Content-Length": "70770",
     "Content-Type": "text/html; charset=utf-8"
   },
-  "_release": "e-tag:b6aea4c2e",
+  "_release": "e-tag:12cacded6",
   "main": "index.css",
   "_source": "https://github.com/woothemes/FlexSlider/blob/master/flexslider.css",
   "_target": "*",

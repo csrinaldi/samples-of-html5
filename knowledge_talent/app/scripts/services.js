@@ -2,13 +2,88 @@
 
 var module = angular.module('knowledgeTalentApp.Services', []);
 
-module.factory('AuthService', function($http) {
+module.service('AuthService', function($http, $rootScope, $q, $window) {
     //TODO make a Google SignIn and Other provider
-    return {
-        isLoggedIn: function() {
-            return false;
-        }
+    var GoogleService = function() {
+        var clientId = '669828437303.apps.googleusercontent.com';
+        var scopes = 'https://www.googleapis.com/auth/plus.me';
+        var apiKey = 'AIzaSyARWaMtarIjqPCTw8jgZ0rj9GgV2hAM9kY';
+        var auth = null;
     };
+
+    GoogleService.prototype.config = function(cfg) {
+        var deffered = $q.defer();
+        var self = this;
+
+        if (angular.isObject(cfg)) {
+            //this.clientId = cfg.clientID;
+            //this.apiKey = cfg.apiKey;
+            //this.scopes = cfg.scopes;
+
+            $window.OnLoadCallback = function() {
+                console.log("Resolved");
+                gapi.client.setApiKey(self.apiKey);
+                deffered.resolve();
+            };
+
+            (function() {
+                var po = document.createElement('script');
+                po.type = 'text/javascript';
+                po.async = true;
+                po.src = "https://apis.google.com/js/client.js?onload=OnLoadCallback";
+                //po.src = 'https://apis.google.com/js/plusone.js?onload=OnLoadCallback';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(po, s);
+            })();
+        } else {
+            deffered.reject();
+        }
+
+        return deffered.promise;
+    };
+
+    GoogleService.prototype.login = function() {
+        var self = this;
+        var deferred = $q.defer();
+
+        //gapi.auth.init(function() {});
+        window.setTimeout(function() {
+            gapi.auth.authorize(
+                    {
+                        client_id: '669828437303.apps.googleusercontent.com',
+                        scope: 'https://www.googleapis.com/auth/plus.me',
+                        immediate: true,
+                        response_type: 'token'
+                    },
+            function(authResult) {
+                if (authResult instanceof  TypeError) {
+                    deferred.reject(authResult);
+                } else {
+                    self.auth = authResult;
+                    deferred.resolve(authResult);
+                }
+            });
+        }, 1);
+
+        return deferred.promise;
+    };
+
+    GoogleService.prototype.isLogged = function() {
+        return this.auth !== null;
+    };
+
+    GoogleService.prototype.getActivities = function() {
+        
+    };
+    
+    GoogleService.prototype.postComment = function(){
+        
+    };
+
+    this.googleService = function() {
+        return new GoogleService();
+    };
+
 });
 
 module.service("Storage", function($q, $window) {
@@ -213,11 +288,11 @@ module.service("Storage", function($q, $window) {
 
 
 module.service("FileSystem", function($q, $window, $location) {
-    
+
     var directory = null;
     var fs = null;
     var type = null;
-    
+
     this.open = function(type, bytes, callback) {
         var self = this;
         var deferred = $q.defer();
@@ -233,9 +308,9 @@ module.service("FileSystem", function($q, $window, $location) {
                                     function(filesystem) {
                                         self.fs = filesystem;
                                         self.directory = self.fs.root;
-                                        self.fileSystemPath = "filesystem:http://"+$location.host()+"/persistent";
+                                        self.fileSystemPath = "filesystem:http://" + $location.host() + "/persistent";
                                         callback(self.fs);
-                                        
+
                                         deferred.resolve(self);
                                     },
                                     function(error) {
@@ -246,17 +321,17 @@ module.service("FileSystem", function($q, $window, $location) {
                             deferred.reject(error);
                         });
             } else if (type === $window.TEMPORARY) {
-                
+
                 $window.requestFileSystem($window.TEMPORARY, bytes, function(filesystem) {
                     self.fs = filesystem;
                     self.directory = self.fs.root;
-                    self.fileSystemPath = "filesystem:http://"+$location.host()+"/temporary";
+                    self.fileSystemPath = "filesystem:http://" + $location.host() + "/temporary";
                     callback(self.fs);
                     deferred.resolve(self);
                 }, function(error) {
                     deferred.reject(error);
                 });
-                
+
             } else {
                 deferred.reject();
             }
@@ -274,7 +349,7 @@ module.service("FileSystem", function($q, $window, $location) {
         //TODO
     };
 
-    
+
     this.createFile = function(directory, content) {
         //TODO
         return;
@@ -327,7 +402,7 @@ module.service("FileSystem", function($q, $window, $location) {
                         deferred.resolve(toReturn);
                     });
         }
-        
+
         return deferred.promise;
     };
 
