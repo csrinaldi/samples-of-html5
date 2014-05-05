@@ -4,12 +4,24 @@ var module = angular.module('knowledgeTalentApp.Services', []);
 
 module.service('AuthService', function($http, $rootScope, $q, $window) {
     //TODO make a Google SignIn and Other provider
+    //TODO the parameter not be constant
     var GoogleService = function() {
-        var clientId = '669828437303.apps.googleusercontent.com';
-        var scopes = 'https://www.googleapis.com/auth/plus.me';
-        var apiKey = 'AIzaSyARWaMtarIjqPCTw8jgZ0rj9GgV2hAM9kY';
-        var auth = null;
+        this.clientId = '669828437303.apps.googleusercontent.com';
+        this.scopes = 'https://www.googleapis.com/auth/plus.me';
+        this.apiKey = 'AIzaSyARWaMtarIjqPCTw8jgZ0rj9GgV2hAM9kY';
+        this.auth = null;
+        this.state = {
+            LOADED: 'LOADED',
+            LOADING: 'LOADING',
+            ERROR: 'ERROR',
+            NOT_FOUND: 'NOT_FOUND'
+        };
+
+        this.callbacksToCall = new Array();
+        this.apiLoaded = new Array();
     };
+
+    var gs = new GoogleService();
 
     GoogleService.prototype.config = function(cfg) {
         var deffered = $q.defer();
@@ -21,7 +33,6 @@ module.service('AuthService', function($http, $rootScope, $q, $window) {
             //this.scopes = cfg.scopes;
 
             $window.OnLoadCallback = function() {
-                console.log("Resolved");
                 gapi.client.setApiKey(self.apiKey);
                 deffered.resolve();
             };
@@ -44,6 +55,7 @@ module.service('AuthService', function($http, $rootScope, $q, $window) {
 
     GoogleService.prototype.login = function() {
         var self = this;
+        console.log(self.clientId);
         var deferred = $q.defer();
 
         //gapi.auth.init(function() {});
@@ -51,8 +63,8 @@ module.service('AuthService', function($http, $rootScope, $q, $window) {
             gapi.auth.authorize(
                     {
                         client_id: '669828437303.apps.googleusercontent.com',
-                        scope: 'https://www.googleapis.com/auth/plus.me',
-                        immediate: true,
+                        scope: ['https://www.googleapis.com/auth/plus.me', 'https://www.googleapis.com/auth/plus.login'],
+                        immediate: false,
                         response_type: 'token'
                     },
             function(authResult) {
@@ -72,16 +84,125 @@ module.service('AuthService', function($http, $rootScope, $q, $window) {
         return this.auth !== null;
     };
 
-    GoogleService.prototype.getActivities = function() {
-        
-    };
-    
-    GoogleService.prototype.postComment = function(){
-        
+
+    GoogleService.prototype.loadApi = function(api, version, callback) {
+        var self = this;
+        var log = [];
+        var finded = self.state.NOT_FOUND;
+
+        console.log(self.apiLoaded);
+        console.log(self.callbacksToCall);
+
+        if (self.apiLoaded.length > 0) {
+            angular.forEach(self.apiLoaded, function(value, key) {
+                log.push(key + ": " + value);
+                var name = api + "-" + version;
+                if (key === name) {
+                    return value;
+                }
+
+                switch (finded) {
+                    case self.state.NOT_FOUND:
+                        console.log("NOT_FOUND");
+                        self.apiLoaded.length++;
+                        self.apiLoaded[api + "-" + version] = self.state.LOADING;
+                        console.log(self.apiLoaded);
+                        if (self.callbacksToCall[api + "-" + version] === undefined) {
+                            self.callbacksToCall[api + "-" + version] = new Array();
+                        }
+                        self.callbacksToCall[api + "-" + version].push(callback);
+
+                        gapi.client.load(api, version, function() {
+                            self.apiLoaded[api + "-" + version] = self.state.LOADED;
+                            self.loadApi(api, vesion, {});
+                        });
+                        break;
+                    case self.state.ERROR:
+                        console.log("ERROR");
+                        break;
+                    case self.state.LOADING:
+                        console.log("LOADING");
+                        if (self.callbacksToCall[api + "-" + version] === undefined) {
+                            self.callbacksToCall[api + "-" + version] = new Array();
+                        }
+                        self.callbacksToCall[api + "-" + version].push(callback);
+                        break;
+                    case self.state.LOADED:
+                        console.log("LOADED");
+                        
+                        callback();
+                        break;
+                }
+            }, log);
+        } else {
+            self.apiLoaded.length++;
+            self.apiLoaded[api + "-" + version] = self.state.LOADING;
+
+            if (self.callbacksToCall[api + "-" + version] === undefined) {
+                self.callbacksToCall[api + "-" + version] = new Array();
+            }
+            self.callbacksToCall[api + "-" + version].push(callback);
+
+            gapi.client.load(api, version, function() {
+                self.apiLoaded[api + "-" + version] = self.state.LOADED;
+                angular.forEach(self.callbacksToCall[api + "-" + version], function(value, key) {
+                    value();
+                }, log);
+                console.log(self.apiLoaded);
+            });
+        }
+
     };
 
+    GoogleService.prototype.getPeopleByUser = function(userId) {
+        var self = this;
+        var deferred = $q.defer();
+        this.loadApi("plus", "v1", function() {
+            var request = gapi.client.plus.people.get({"userId": userId});
+            request.execute(function(response) {
+                if (response === false) {
+                    deferred.reject(response);
+                } else {
+                    deferred.resolve(response);
+                }
+            });
+
+        });
+
+        return deferred.promise;
+    };
+
+    GoogleService.prototype.getActivitiesByUser = function(userId) {
+        var self = this;
+        if (!this.plusApiLoaded) {
+            gapi.client.load("plus", "v1", function() {
+                self.plusApiLoaded = true;
+                self.getActivitiesByUser(userId);
+            });
+        } else {
+            if (this.isLogged()) {
+                var deferred = $q.defer();
+                var request = gapi.client.plus.activities.list({"userId": userId});
+                request.execute(function(response) {
+                    if (response === false) {
+                        deferred.reject(response);
+                    } else {
+                        deferred.resolve(response);
+                    }
+
+                });
+                return deferred.promise;
+            }
+        }
+    };
+
+    GoogleService.prototype.postComment = function() {
+
+    };
+
+    //TODO make a better singleton
     this.googleService = function() {
-        return new GoogleService();
+        return gs;
     };
 
 });
@@ -417,5 +538,13 @@ module.service("FileSystem", function($q, $window, $location) {
     this.rm = function(path, options) {
         //TODO
     };
+
+});
+
+
+module.service('MessageBus', function($q) {
+
+
+
 
 });
